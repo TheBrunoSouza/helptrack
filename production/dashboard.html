@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
@@ -17,7 +17,7 @@
     <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
     <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-	
+
     <!-- bootstrap-progressbar -->
     <link href="../vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
     <!-- JQVMap -->
@@ -25,160 +25,412 @@
     <!-- bootstrap-daterangepicker -->
     <link href="../vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
-    <!-- Custom Theme Style -->
-    <link href="../build/css/custom.min.css" rel="stylesheet">
-
     <!-- jQuery -->
     <script src="../vendors/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="../vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="../vendors/nprogress/nprogress.js"></script>
-    <!-- Chart.js -->
-    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
-    <!-- gauge.js -->
-    <script src="../vendors/gauge.js/dist/gauge.min.js"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-    <!-- iCheck -->
-    <script src="../vendors/iCheck/icheck.min.js"></script>
-    <!-- Skycons -->
-    <script src="../vendors/skycons/skycons.js"></script>
-    <!-- Flot -->
-    <script src="../vendors/Flot/jquery.flot.js"></script>
-    <script src="../vendors/Flot/jquery.flot.pie.js"></script>
-    <script src="../vendors/Flot/jquery.flot.time.js"></script>
-    <script src="../vendors/Flot/jquery.flot.stack.js"></script>
-    <script src="../vendors/Flot/jquery.flot.resize.js"></script>
-    <!-- Flot plugins -->
-    <script src="../vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
-    <script src="../vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
-    <script src="../vendors/flot.curvedlines/curvedLines.js"></script>
-    <!-- DateJS -->
-    <script src="../vendors/DateJS/build/date.js"></script>
-    <!-- JQVMap -->
-    <script src="../vendors/jqvmap/dist/jquery.vmap.js"></script>
-    <script src="../vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
-    <script src="../vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="../vendors/moment/min/moment.min.js"></script>
-    <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-    <!-- Custom Theme Scripts -->
-    <script src="../build/js/custom.min.js"></script>
-  </head>
+    <!-- DataTables CSS -->
+    <link href="../vendors/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet" />
+    <!-- DataTables Responsive CSS -->
+    <link href="../vendors/datatables-responsive/dataTables.responsive.css" rel="stylesheet" />
 
-  <body class="nav-md">
-    <div class="container body">
-      <div class="main_container">
+    <!-- DataTables JavaScript -->
+    <script src="../vendors/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../vendors/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../vendors/datatables-responsive/dataTables.responsive.js"></script>
 
-        <!-----------------------------------------------------------------------------------PERFIL DO USUARIO E MENU-->
+    <!-- Custom Theme Style -->
+    <link href="../build/css/custom.min.css" rel="stylesheet">
+</head>
+
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
         <div class="col-md-3 left_col">
-          <div class="left_col scroll-view">
-            <div class="navbar nav_title" style="border: 0;">
-              <a href="dashboard.html" class="site_title"><span>Help Track</span></a>
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="../index.html" class="site_title"><span>Help Track</span></a>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <!-- BEM VINDO -->
+                <div class="profile clearfix">
+                    <div class="profile_pic">
+                        <img src="images/perfil.jpg" alt="..." class="img-circle profile_img">
+                    </div>
+                    <div class="profile_info">
+                        <span>Bem vindo,</span>
+                        <h2>Bruno Souza</h2>
+                    </div>
+                </div>
+
+                <!-- MENU LATERAL -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <ul class="nav side-menu">
+                            <li><a><i class="fa fa-bar-chart"></i> Operação <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a href="dashboard.html">Dashboard</a></li>
+                                    <li><a href="#">Mapa</a></li>
+                                </ul>
+                            </li>
+                            <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a href="form.html">Condutores</a></li>
+                                    <li><a href="form_advanced.html">Veículos</a></li>
+                                    <li><a href="tables/tableViagens.html">Viagens</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
-
-            <div class="clearfix"></div>
-
-            <!-- BEM VINDO -->
-            <div class="profile clearfix">
-              <div class="profile_pic">
-                <img src="images/perfil.jpg" alt="..." class="img-circle profile_img">
-              </div>
-              <div class="profile_info">
-                <span>Bem vindo,</span>
-                <h2>Bruno Souza</h2>
-              </div>
-            </div>
-
-            <!-- MENU LATERAL -->
-            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-              <div class="menu_section">
-                <ul class="nav side-menu">
-                  <li><a><i class="fa fa-bar-chart"></i> Operação <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="dashboard.html">Dashboard</a></li>
-                      <li><a href="#">Mapa</a></li>
-                    </ul>
-                  </li>
-                  <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="form.html">Condutores</a></li>
-                      <li><a href="form_advanced.html">Veículos</a></li>
-                      <li><a href="tables/tableViagens.html">Viagens</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
         </div>
 
-        <!------------------------------------------------------------------------ BUTTONS DO CABECALHO DO DASHBOARD -->
+        <!-- top navigation -->
         <div class="top_nav">
-          <div class="nav_menu">
-            <nav>
-              <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-              </div>
+            <div class="nav_menu">
+                <nav>
+                    <div class="nav toggle">
+                        <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                    </div>
 
-              <ul class="nav navbar-nav navbar-right">
-                <li class="">
-                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    Sistema
-                    <span class=" fa fa-angle-down"></span>
-                  </a>
-                  <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    <li><a href="javascript:;"> Seu Perfil</a></li>
-                    <li>
-                      <a href="javascript:;">
-                        <!--<span class="badge bg-red pull-right">50%</span>-->
-                        <span>Configurações</span>
-                      </a>
-                    </li>
-                    <li><a href="javascript:;">Ajuda</a></li>
-                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </nav>
-          </div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                Sistema
+                                <span class=" fa fa-angle-down"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                <li><a href="javascript:;"> Seu Perfil</a></li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <!--<span class="badge bg-red pull-right">50%</span>-->
+                                        <span>Configurações</span>
+                                    </a>
+                                </li>
+                                <li><a href="javascript:;">Ajuda</a></li>
+                                <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- CONTAINER -->
+        <div class="right_col" role="main">
+
+            <!------------------------------------------------------------------------------------------- TOTALIZADORES-->
+            <div class="title_left">
+                <h3>Totalizador</h3>
+            </div>
+            <div class="row tile_count">
+                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-road"></i><a href="tables/tableViagens.html"> Viagens</a> </span>
+                    <div class="count" id="totalViagens"></div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Atrasados </a></span>
+                    <div class="count" style="color: crimson" id="totalAtrasados"></div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">No prazo </a></span>
+                    <div class="count" style="color: #00A000" id="totalNoPrazo"></div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-automobile"></i><a href="tables/tableVeiculos.html"> Veículos</a></span>
+                    <div class="count" id="totalVeiculos"></div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i><a href="tables/tableCondutores.html"> Condutores</a></span>
+                    <div class="count" id="totalCondutores"></div>
+                </div>
+            </div>
+
+            <div id="divEsqueda">
+                <div class="title_left">
+                    <h3>Finalizados Hoje</h3>
+                </div>
+                <div class="row tile_count">
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-road"></i><a href="form_advanced.html"> Viagens</a></span>
+                        <div class="count"></div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Atrasos </a></span>
+                        <div class="count" style="color: crimson"></div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">No Prazo </a></span>
+                        <div class="count" style="color: #00A000"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="divDireita">
+                <div class="title_left">
+                    <h3>Acontecendo Agora</h3>
+                </div>
+                <div class="row tile_count">
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-road"></i><a href="form_advanced.html"> Viagens</a></span>
+                        <div class="count"></div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Possível Atraso </a></span>
+                        <div class="count" style="color: crimson"></div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">Dentro do Prazo </a></span>
+                        <div class="count" style="color: #00A000"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!----------------------------------------------------------------------------- PANEL DE ATRASOS E RANKING -->
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="dashboard_graph">
+
+                        <!--ATRASOS-->
+                        <div class="row x_title">
+                            <div class="col-md-6">
+                                <h3>Atrasos</h3>
+                            </div>
+                        </div>
+
+                        <!--GRAFICO DE ATRASOS DIARIOS-->
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <div id="chart_plot_01" class="demo-placeholder"></div>
+                        </div>
+
+                        <!--INICIO RANKING DE CONDUTORES-->
+                        <div class="col-md-3 col-sm-3 col-xs-12 bg-white">
+                            <br>
+                            <div class="x_title">
+                                <i class="fa fa-trophy"></i> <a href="../index.html">Ranking de Condutores</a>
+                            </div>
+
+                            <div class="col-md-12 col-sm-12 col-xs-6">
+                                <div>
+                                    <p>1º</p>
+                                    <p>Ademir Rosa - 04 Atrasos no total</p>
+                                    <div class="">
+                                        <div class="progress progress_sm" style="width: 90%;">
+                                            <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="4"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p>2º</p>
+                                    <p>Jeferson Marques - 35 Atrasos no total</p>
+                                    <div class="">
+                                        <div class="progress progress_sm" style="width: 90%;">
+                                            <div class="progress-bar bg-blue" role="progressbar" data-transitiongoal=35></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-6">
+                                <div>
+                                    <p>3º</p>
+                                    <p>Carlos Alberto - 55 Atrasos no total</p>
+                                    <div class="">
+                                        <div class="progress progress_sm" style="width: 90%;">
+                                            <div class="progress-bar bg-orange" role="progressbar" data-transitiongoal="55"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--FIM RANKING DE CONDUTORES-->
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIM DOS ATRASOS E RANKING-->
+
+            <br>
+
+            <!--------------------------------------------------------------------------------------------- OCORRENCIAS-->
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="dashboard_graph">
+                        <!--<div class="row x_title">-->
+                        <!--<div class="col-md-6">-->
+                        <!--&lt;!&ndash;<h3>Ocorrências</h3>&ndash;&gt;-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <div class="row x_title">
+                            <div class="col-md-6">
+                                <h3>Últimas Ocorrências</h3>
+                            </div>
+                        </div>
+                        <!--GRID DE OCORRENCIAS-->
+                        <div class="x_panel">
+
+                            <div class="x_content">
+
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <th>Data Hora</th>
+                                        <th>Placa</th>
+                                        <th>Condutor</th>
+                                        <th>Local</th>
+                                        <th>Parâmetro</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td style="color: red">Entrega atrasada</td>
+                                        <td>17/04/17 15:55</td>
+                                        <td>IVN0609</td>
+                                        <td>Marcos Silva</td>
+                                        <td>São Paulo - Avenida das Américas</td>
+                                        <td>Hora prevista: 15:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Excesso de velocidade</td>
+                                        <td>15/04/17 14:22</td>
+                                        <td>ATX7766</td>
+                                        <td>Lucas Cidade</td>
+                                        <td>Avenida Brasil - 176</td>
+                                        <td>Velocidade: 101km/h</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: orange;">Possível atraso na chegada ao destino</td>
+                                        <td>15/04/17 23:10</td>
+                                        <td>IET7265</td>
+                                        <td>Reginaldo Araujo</td>
+                                        <td>RS - 324 Km 189</td>
+                                        <td>Movimentação até 22h00 </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: orange">Atraso na partida</td>
+                                        <td>15/04/17 23:10</td>
+                                        <td>IET7265</td>
+                                        <td>Reginaldo Araujo</td>
+                                        <td>RS - 324 Km 189</td>
+                                        <td>Hora prevista de partida: 22:00 </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Movimento indevido</td>
+                                        <td>15/04/17 23:10</td>
+                                        <td>IET7265</td>
+                                        <td>Reginaldo Araujo</td>
+                                        <td>RS - 324 Km 189</td>
+                                        <td>Movimentação até 22h00 </td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="dashboard_graph">
+                        <div class="row x_title">
+                            <div class="col-md-6">
+                                <h3>Total de Atrasos por Condutor</h3>
+                            </div>
+                        </div>
+                        <!--FIM DO GRID DE OCORRENCIAS-->
+
+                        <!--INICIO DO CHART DE OCORRENCIAS POR CONDUTOR-->
+                        <div class="x_panel">
+
+                            <div class="x_content">
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                        </div>
+                        <!--FIM DO CHART DE OCORRENCIAS POR CONDUTOR-->
+                    </div>
+                </div>
+            </div>
+            <br>
+            <!--FIM DAS OCORRENCIAS-->
         </div>
 
-        <!------------------------------------------------------------------------------------------------- DASHBOARD-->
-
-
-        <!--------------------------------------------------------------------------------------------------- RODAPE -->
+        <!-- INICIO RODAPE -->
         <!--<footer>-->
-          <!--<div class="pull-right">-->
-            <!--Help Track - Bruno Souza - Universidade de Passo Fundo - Pointer Cielo do Brasil-->
-          <!--</div>-->
-          <!--<div class="clearfix"></div>-->
+        <!--<div class="pull-right">-->
+        <!--Help Track - Bruno Souza - Universidade de Passo Fundo - Pointer Cielo do Brasil-->
+        <!--</div>-->
+        <!--<div class="clearfix"></div>-->
         <!--</footer>-->
+        <!-- FIM RODAPE -->
 
-      </div>
     </div>
+</div>
 
-    <script type="text/javascript">
-        $ (document).ready (function () {
+<script type="text/javascript">
+    $ (document).ready (function () {
 
-            var params = {
-                idEmpresa: 64247
-            };
+        var params = {
+            idEmpresa: 64247
+        };
 
-            $.getJSON ('json/jsonDashboard.php', params, function (json1) {
-                $ ('#totalCondutores').html (json1.totalCondutores['TOTAL_CONDUTORES']);
-                $ ('#totalVeiculos').html (json1.totalVeiculos['TOTAL_VEICULOS']);
-                $ ('#totalViagens').html (json1.totalViagens['TOTAL_VIAGENS']);
-                $ ('#totalAtrasados').html (json1.totalAtrasados['TOTAL_ATRASADOS']);
-                $ ('#totalNoPrazo').html (json1.totalNoPrazo['TOTAL_NO_PRAZO']);
-            });
+        $.getJSON ('json/jsonDashboard.php', params, function (json1) {
+            $ ('#totalCondutores').html (json1.totalCondutores['TOTAL_CONDUTORES']);
+            $ ('#totalVeiculos').html (json1.totalVeiculos['TOTAL_VEICULOS']);
+            $ ('#totalViagens').html (json1.totalViagens['TOTAL_VIAGENS']);
+            $ ('#totalAtrasados').html (json1.totalAtrasados['TOTAL_ATRASADOS']);
+            $ ('#totalNoPrazo').html (json1.totalNoPrazo['TOTAL_NO_PRAZO']);
         });
-    </script>
-	
-  </body>
+    });
+</script>
+
+<!-- Bootstrap -->
+<script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="../vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="../vendors/nprogress/nprogress.js"></script>
+<!-- Chart.js -->
+<script src="../vendors/Chart.js/dist/Chart.min.js"></script>
+<!-- gauge.js -->
+<script src="../vendors/gauge.js/dist/gauge.min.js"></script>
+<!-- bootstrap-progressbar -->
+<script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+<!-- iCheck -->
+<script src="../vendors/iCheck/icheck.min.js"></script>
+<!-- Skycons -->
+<script src="../vendors/skycons/skycons.js"></script>
+<!-- Flot -->
+<script src="../vendors/Flot/jquery.flot.js"></script>
+<script src="../vendors/Flot/jquery.flot.pie.js"></script>
+<script src="../vendors/Flot/jquery.flot.time.js"></script>
+<script src="../vendors/Flot/jquery.flot.stack.js"></script>
+<script src="../vendors/Flot/jquery.flot.resize.js"></script>
+<!-- Flot plugins -->
+<script src="../vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+<script src="../vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+<script src="../vendors/flot.curvedlines/curvedLines.js"></script>
+<!-- DateJS -->
+<script src="../vendors/DateJS/build/date.js"></script>
+<!-- JQVMap -->
+<script src="../vendors/jqvmap/dist/jquery.vmap.js"></script>
+<script src="../vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+<script src="../vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+<!-- bootstrap-daterangepicker -->
+<script src="../vendors/moment/min/moment.min.js"></script>
+<script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="../build/js/custom.min.js"></script>
+
+</body>
 </html>
+
+

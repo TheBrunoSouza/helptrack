@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Help Track | Gestor de Viagens </title>
+    <link rel="icon" href="../images/imagens/16x16/veiculo.png">
 
     <!-- Bootstrap -->
     <link href="../../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,6 +43,10 @@
     <script src="../../vendors/datatables-responsive/dataTables.responsive.js"></script>
     <!-- Custom Theme Style -->
     <link href="../../build/css/custom.min.css" rel="stylesheet">
+    <!-- PNotify -->
+    <link href="../../vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+    <link href="../../vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+    <link href="../../vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
 
 </head>
 
@@ -155,22 +160,20 @@
                       </div>
                       <div class="x_content">
                         <br/>
-                        <form id="idFormCadViagem" data-parsley-validate class="form-horizontal form-label-left" action="../exec/execViagem.php" method="get">
+                        <form id="idFormCadViagem" data-parsley-validate class="form-horizontal form-label-left"  novalidate>
 
-                          <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Descri&ccedil;&atilde;o <span class="required">*</span></label>
+                          <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descricaoViagem">Descri&ccedil;&atilde;o <span class="required">*</span></label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                              <input type="text" id="descricaoViagem" required="required" class="form-control col-md-7 col-xs-12">
+                              <input type="text" id="descricaoViagem" class="form-control col-md-7 col-xs-12" name="descricaoViagem" required="required" type="text" placeholder="Informe uma descri&ccedil;&atilde;o para a viagem">
                             </div>
                           </div>
 
-                          <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ve&iacute;culo <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
+                          <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ve&iacute;culo <span class="required">*</span></label>
 
+                            <div class="col-md-6 col-sm-6 col-xs-12">
                               <select class="form-control" id="idComboVeiculo">
-                                <option value="">&nbsp;</option>
                                 <?
                                 $sqlVeiculos = "SELECT * FROM help_track_veiculo";
                                 $respostaVeiculos = oci_parse ($conexao, $sqlVeiculos);
@@ -180,16 +183,14 @@
                                     <option value="<?=$rowVeiculo['CODIGO_VEICULO']?>"><?=$rowVeiculo['PLACA'].' - '.$rowVeiculo['FROTA']?></option>
                                 <? } ?>
                               </select>
-
                             </div>
                           </div>
 
-                          <div class="form-group">
+                          <div class="item form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ponto Inicial <span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                               <select class="form-control" id="idComboReferenciaIni">
-                                  <option value="">&nbsp;</option>
                                   <?
                                   $sqlReferenciaIni = "SELECT * FROM help_track_referencia";
                                   $respostaReferenciaIni = oci_parse ($conexao, $sqlReferenciaIni);
@@ -202,12 +203,11 @@
                             </div>
                           </div>
 
-                          <div class="form-group">
+                          <div class="item form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ponto Final <span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                               <select class="form-control" id="idComboReferenciaFim">
-                                  <option value="">&nbsp;</option>
                                   <?
                                   $sqlReferenciaFim = "SELECT * FROM help_track_referencia";
                                   $respostaReferenciaFim = oci_parse ($conexao, $sqlReferenciaFim);
@@ -220,7 +220,7 @@
                             </div>
                           </div>
 
-                          <div class="form-group">
+                          <div class="item form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" > Previs&atilde;o de In&iacute;cio e Fim <span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -241,10 +241,10 @@
 
                           <div class="ln_solid"></div>
 
-                          <div class="form-group">
+                          <div class="item form-group">
                             <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                               <button class="btn btn-danger" id="buttonCancelar" type="button">Cancelar</button>
-                              <button type="submit" id="buttonSalvar"  class="btn btn-success">Salvar</button>
+                              <button type="submit" id="buttonSalvar" disabled="true" class="btn btn-success">Salvar</button>
                             </div>
                           </div>
                         </form>
@@ -270,20 +270,31 @@
 
         $ (document).ready (function () {
 
-//            $('input[name="reservation-time"]').daterangepicker(
-//                {
-//                    locale: {
-//                        format: 'YYYY-MM-DD'
-//                    }
-//                }
-//            );
+            //Disable button salvar
+            $('input[type="text"]').keyup(function() {
+                if($(this).val() != '') {
+                    $(':input[type="submit"]').prop('disabled', false);
+                }else{
+                    $(':input[type="submit"]').prop('disabled', true);
+                }
+            });
+
+            //Formatando a data da viagem
+            $(function() {
+                $('input[name="reservation-time"]').daterangepicker({
+                    timePicker: true,
+                    locale: {
+                        format: 'DD/MM/YYYY HH:mm'
+                    }
+                });
+            });
 
             //Funcao cancelar o cadastro de viagem
             $('#buttonCancelar').click(function(){
                 window.location.href = "../tables/tableViagens.html";
             });
 
-            //Funcao apra envio dos dados de viagem
+            //Funcao para envio dos dados de viagem
             $('#buttonSalvar').click(function(){
 
                 var descricaoViagem,
@@ -303,13 +314,19 @@
                     url: '../exec/execViagem.php',
                     data: {
                         descricaoViagem: descricaoViagem,
-                        veiculo: codVeiculo,
+                        codVeiculo: codVeiculo,
                         codReferenciaIni: codReferenciaIni,
                         codReferenciaFim: codReferenciaFim,
                         previsao: previsaoViagem
                     },
                     success: function(data) {
-                        console.info('ok');
+                        $.teste  = new PNotify({
+                            title: 'Sucesso! ',
+                            text: 'Viagem cadastrada',
+                            type: 'success',
+                            styling: 'bootstrap3'
+                        });
+
                     },
                     error: function () {
                         alert("error");
@@ -353,9 +370,14 @@
     <!-- bootstrap-daterangepicker -->
     <script src="../../vendors/moment/min/moment.min.js"></script>
     <script src="../../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-
     <!-- Custom Theme Scripts -->
     <script src="../../build/js/custom.min.js"></script>
+    <!-- validator -->
+    <script src="../../vendors/validator/validator.js"></script>
+    <!-- PNotify -->
+    <script src="../../vendors/pnotify/dist/pnotify.js"></script>
+    <script src="../../vendors/pnotify/dist/pnotify.buttons.js"></script>
+    <script src="../../vendors/pnotify/dist/pnotify.nonblock.js"></script>
 </body>
 </html>
 

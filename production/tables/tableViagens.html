@@ -9,7 +9,7 @@
 
   <title>Help Track | Gestor de Viagens </title>
   <link rel="icon" href="../images/imagens/16x16/veiculo.png">
-
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <!-- Bootstrap -->
   <link href="../../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
@@ -39,8 +39,41 @@
   <script src="../../vendors/datatables-plugins/dataTables.bootstrap.min.js"></script>
   <script src="../../vendors/datatables-responsive/dataTables.responsive.js"></script>
 
+  <!--Mapa Google-->
+  <script src="../js/maps/markerclusterer.js"></script>
+  <script src="../js/maps/markerwithlabel.js" async></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0oFYKDpD5zmMsUZJkJfv8SKiEu3JJ_ZA" async defer></script>
+
   <!-- Custom Theme Style -->
   <link href="../../build/css/custom.min.css" rel="stylesheet">
+
+  <style type="text/css">
+    html, body, #map-canvas {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    #map-canvas {
+      width:860px;
+      height:480px;
+    }
+
+    .labels {
+      color: white;
+      background-color: gray;
+      font-family: "Lucida Grande", "Arial", sans-serif;
+      font-size: 8px;
+      text-align: center;
+      width: 30px;
+      white-space: nowrap;
+    }
+
+    .toolbar {
+      float:left;
+    }
+  </style>
+
 </head>
 
 <body class="nav-md">
@@ -77,8 +110,8 @@
               </li>
               <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                  <li><a href="../tables/tableCondutores.html">Condutores</a></li>
-                  <li><a href="form_advanced.html">Veículos</a></li>
+                  <li><a href="#">Condutores</a></li>
+                  <li><a href="#">Veículos</a></li>
                   <li><a href="tableViagens.html">Viagens</a></li>
                 </ul>
               </li>
@@ -104,15 +137,15 @@
                 <span class=" fa fa-angle-down"></span>
               </a>
               <ul class="dropdown-menu dropdown-usermenu pull-right">
-                <li><a href="javascript:;"> Seu Perfil</a></li>
+                <li><a href="#"> Seu Perfil</a></li>
                 <li>
-                  <a href="javascript:;">
+                  <a href="#">
                     <!--<span class="badge bg-red pull-right">50%</span>-->
-                    <span>Configurações</span>
+                    <span>Configura&ccedil;&otilde;es</span>
                   </a>
                 </li>
-                <li><a href="javascript:;">Ajuda</a></li>
-                <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
+                <li><a href="#">Ajuda</a></li>
+                <li><a href="#"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
               </ul>
             </li>
           </ul>
@@ -129,11 +162,7 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="dashboard_graph">
 
-
-
                 <button id="buttonNovaViagem" class="btn btn-primary" type="button" style="margin-left: 90%" onclick="novaViagem()">Nova Viagem</button>
-
-
 
             <!--ATRASOS-->
             <div class="row x_title">
@@ -147,24 +176,69 @@
                 <table class="table table-striped table-bordered table-hover" id="idDataTablesViagem" style="width: 100%">
                   <thead>
                   <tr>
-                    <th data-field="idViagem" title="Cor da situação (título ainda não definido)"> # </th>
-                    <th data-field="placa" title="Placa"> Placa </th>
-                    <th data-field="situacao" title="Situação"> Situação </th>
-                    <th data-field="alteraSituacao" title="Alterar situação manualmente"> # </th>
-                    <th data-field="prevIni" title="Previsão de início"> Prev. Ini. </th>
-                    <th data-field="dtIni" title="Data de início"> Data Ini. </th>
-                    <th data-field="prevFim" title="Previsão de fim">Prev. Fim. </th>
-                    <th data-field="dtFim" title="Data de fim"> Data Fim </th>
-                    <th data-field="refIni" title="Referência inicial"> Ref. Inicial. </th>
-                    <th data-field="refFim" title=Referência final> Ref. Final </th>
-                    <th data-field="distancia" title="Distância"> Dist. </th>
-                    <th data-field="ocorrencias" title="Não conformidades"> N/C </th>
-                    <th data-field="totReal" title="Entregues / total de entregas"> E/T </th>
-                    <th data-field="btn1" title="Detalhes da viagem"> # </th>
-                    <th data-field="btn2" title="Mapa da viagem"> # </th>
+                    <th data-field="codViagem" title=codigo_viagem"></th>
+                    <th data-field="placa" title="Ve&iacute;culo"> Ve&iacute;culo </th>
+                    <th data-field="codReferenciaIni" title="Situa&ccedil;&atilde;o">Local Inicial</th>
+                    <th data-field="codReferenciaFim" title="Alterar situação manualmente"> Local Final </th>
+                    <th data-field="prevPartida" title="Previsão de início">Previs&atilde;o de Partida</th>
+                    <th data-field="partida" title="Data de início">Partida</th>
+                    <th data-field="prevChegada" title="Previsão de fim">Previs&atilde;o de Chegada</th>
+                    <th data-field="chegada" title="Data de fim">Chegada</th>
+                    <th data-field="status" title="Referência inicial"> Status</th>
+                    <th data-field="situacao" title=Referência final> Situação </th>
+                    <th data-field="descricao" title="Distância">Descri&ccedil;&atilde;o</th>
+                    <th data-field="rota" title="rota">Rota</th>
                   </tr>
                   </thead>
                 </table>
+              </div>
+            </div>
+
+            <!-- PARTIDA -->
+            <div class="modal fade" id="viagemMapModal" style="height: 800px;">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="">X</button>
+                    <h4 class="modal-title">Posi&ccedil;&atilde;o Atual do Ve&iacute;culo</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container">
+                      <div class="row">
+                        <!-- Na div abaixo é carregado um mapa do Google Maps através do Jquery -->
+                        <div id="map-canvasPartida" class="" style="height: 400px;"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button id="buttonIniciarViagem" class="btn btn-primary" type="button" style="margin-left: 70%" onclick="iniciarViagem()">Iniciar</button>
+                  </div>
+                  <input type="text" id="codViagemIniciarHidden" hidden="true">
+                </div>
+              </div>
+            </div>
+
+            <!-- CHEGADA -->
+            <div class="modal fade" id="chegadaModal" style="height: 800px;">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="">X</button>
+                    <h4 class="modal-title">Posi&ccedil;&atilde;o Atual do Ve&iacute;culo</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container">
+                      <div class="row">
+                        <!-- Na div abaixo é carregado um mapa do Google Maps através do Jquery -->
+                        <div id="map-canvasChegada" class="" style="height: 400px;"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button id="buttonFinalizarViagem" class="btn btn-danger" type="button" style="margin-left: 70%" onclick="finalizarViagem()">Encerrar</button>
+                  </div>
+                  <input type="text" id="codViagemFinalizarHidden" hidden="true">
+                </div>
               </div>
             </div>
 
@@ -175,107 +249,425 @@
       </div>
       <br>
     </div>
-
-    <!-- INICIO RODAPE -->
-    <!--<footer>-->
-      <!--<div class="pull-right" style="height: 10%">-->
-        <!--Help Track - Bruno Souza - Universidade de Passo Fundo - Pointer Cielo do Brasil-->
-      <!--</div>-->
-      <!--<div class="clearfix"></div>-->
-    <!--</footer>-->
-    <!-- FIM RODAPE -->
-
   </div>
 </div>
 
 <script type="text/javascript">
 
-
   function novaViagem(){
       window.location.href = "../cad/cadViagens.php";
   }
 
-    $(document).ready(function() {
+  function iniciarViagem(){
+      $.ajax({
+          type: 'post',
+          url: '../exec/execViagem.php',
+          data: {
+              "acao": 'iniciarViagem',
+              "codViagem": $('#codViagemIniciarHidden').val()
+          },
+          success: function () {
+              alert ("Viagem Iniciada!");
+              $('#viagemMapModal').modal('hide');
+              location.reload();
+          }
+      });
+  }
 
-        var table = $('#idDataTablesViagem').DataTable({
-            destroy: true,
-            responsive: true,
-            processing: true,
-            oScroller: {
-                "loadingIndicator": true
-            },
-            ajax: {
-                url: '../json/jsonViagens.php',
-                dataSrc: 'viagens'
-            },
-            columns: [
-                { "data": "codViagem"},
-                { "data": "veiculo" },
-                { "data": "situacao" },
-                {
-                    sortable: false,
-                    "render": function ( data, type, full, meta ) {
-                        var buttonID = full.idViagem;
-                        return "<button id='"+buttonID+"' type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#formModal' data-idviagem='"+buttonID+"' onclick='validaEGrava("+buttonID+")''>"+
-                            "<i class='fa fa-edit'></i>"+
-                            "</button>";
-                    }
-                },
-                { "data": "prevIni" },
-                { "data": "dtIni" },
-                { "data": "prevFim" },
-                { "data": "dtFim", "orderable": false },
-                { "data": "refIni" },
-                { "data": "refFim" },
-                { "data": "distancia", "orderable": false },
-                { "data": "ocorrencias", "orderable": false },
-                {  sortable: false, "data": "totReal", "orderable": false },
-                {
-                    sortable: false,
-                    "render": function ( data, type, full, meta ) {
-                        var buttonID = full.idViagem;
+  function finalizarViagem(){
+      $.ajax({
+          type: 'post',
+          url: '../exec/execViagem.php',
+          data: {
+              "acao": 'finalizarViagem',
+              "codViagem": $('#codViagemFinalizarHidden').val()
+          },
+          success: function () {
+              alert ("Viagem Finalizada!");
+              $('#chegadaModal').modal('hide');
+              location.reload();
+          }
+      });
+  }
 
+  $(document).ready(function() {
 
-                        return "<button id='"+buttonID+"' type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#viagemDetalModal' data-idviagem='"+buttonID+"'>"+
-                            "<i class='fa fa-list'></i>"+
-                            "</button>";
-                    }
-                },
-                {
-                    sortable: false,
-                    "render": function ( data, type, full, meta ) {
-                        var buttonID = full.idViagem;
-                        var plc = full.placa;
-                        return "<button type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#viagemMapModal' data-idviagem='"+buttonID+"' data-placa='"+plc+"'>"+
-                            "<i class='fa fa-map-marker'></i>"+
-                            "</button>";
-                    }
-                }
-            ]
-            ,
-            "columnDefs": [ {
-                "targets": 0,
+      var table = $('#idDataTablesViagem').DataTable({
+          "order": [
+              [ 8, "asc" ]
+          ],
+          "bJQueryUI": true,
+          "oLanguage": {
+              "sProcessing":   "Processando...",
+              "sLengthMenu":   "Exibir _MENU_ registros",
+              "sZeroRecords":  "Não foram encontrados resultados",
+              "sInfo":         "Exibindo de _START_ até _END_ de _TOTAL_ registros",
+              "sInfoEmpty":    "Exibindo de 0 até 0 de 0 registros",
+              "sInfoFiltered": "",
+              "sInfoPostFix":  "",
+              "sSearch":       "Buscar:",
+              "sUrl":          "",
+              "oPaginate": {
+                  "sFirst":    "Primeiro",
+                  "sPrevious": "Anterior",
+                  "sNext":     "Seguinte",
+                  "sLast":     "Último"
+              }
+          },
+          destroy: true,
+          responsive: true,
+          processing: true,
+          oScroller: {
+              "loadingIndicator": true
+          },
+          ajax: {
+              url: '../json/jsonViagens.php',
+              dataSrc: 'viagens'
+          },
+          columns: [
+              { "data": "codViagem"},
+              { "data": "placa" },
+              { "data": "codReferenciaIni" },
+              { "data": "codReferenciaFim" },
+              { "data": "prevPartida" },
+              {
+                  //Partida
+                  sortable: false,
+                  "render": function (data, type, full, meta) {
+                      if (full.partida == null) {
+                          return "<button type='button' class='btn btn-primary btn-circle'data-target='#viagemMapModal' data-toggle='modal' data-viagem='"+full.codViagem+"'>" +
+                              "<i class='fa fa-play'></i>" +
+                              "</button>";
+                      }
+                      else {
+                          return full.partida;
+                      }
+                  }
+              },
+              { "data": "prevChegada" },
+              { "data": "chegada" },
+              { "data": "statusViagem"},
+              { "data": "situacaoViagem" },
+              { "data": "descricaoViagem" },
+              {
+                  //Rota
+                  sortable: false,
+                  "render": function (data, type, full, meta) {
+                      var disabled = 'disabled';
+                      if(full.partida == null){
+                          disabled = 'disabled'
+                      }
+                      var html = "<button type='button' "+disabled+" class='btn btn-primary btn-circle' data-toggle='modal' data-target='#viagemMapModal' data-placa='"+full.placa+"'>"+
+                          "<i class='fa fa-map-marker'></i>"+
+                          "</button>";
+                      return (html);
+                  }
+              }
+          ],
+          //Cores de status
+          "columnDefs": [
+              {
+                "targets": 8,
                 "createdCell": function (td, cellData, rowData, row, col) {
-                    $(td).css('background', rowData.color);
+                    var colorBackground = "";
+                    var colorFont = "";
+                    switch (rowData.codStatusViagem){
+                        case '1':
+                            colorBackground = '#ff4d4d';
+                            colorFont = '#ffffff';
+                            break;
+                        case '2':
+                            colorBackground = '#3399ff';
+                            colorFont = '#333333'
+                            break;
+                        case '3':
+                            colorBackground = '#ffb84d';
+                            colorFont = '#333333';
+                            break;
+                    }
+                    $(td).css('background-color', colorBackground);
+                    $(td).css('color', colorFont);
                 }
-            }],
-          /*                "dom": '<"dtwcHeader fg-toolbar ui-toolbar ui-widget-header ui-helper-clearfix ui-corner-tl ui-corner-tr"<"#reloadBtn">lfr>t<"fg-toolbar ui-toolbar ui-widget-header ui-helper-clearfix ui-corner-bl ui-corner-br"ip>'
-           */
-        });
-      /*
-       $('div.dtwcHeader').prepend('<button id="reloadBtn">Reload</button>');
-       $('#reloadBtn').html('Reload').button().click(function (event) {
-       $(this).prop('disabled', true);
-       table.ajax.reload(function (json) {
-       $('#reloadBtn').prop('disabled', false);
-       });
-       });
-       */
+              },
+              {
+                  "targets": 9,
+                  "createdCell": function (td, cellData, rowData, row, col) {
+                      var colorFont = "";
+                      switch (rowData.codSituacaoViagem){
+                          case '1': //Finalizada
+                              colorFont = '#1917ff';
+                              break;
+                          case '2': //Aguardando inicio
+                              colorFont = '#fa9000'
+                              break;
+                          case '3': //Em Andamento
+                              colorFont = '#49ff07';
+                              break;
+                      }
+                      $(td).css('color', colorFont);
+                  }
+              }
+          ,{
+              //Chegada
+              "targets": 7,
+              "createdCell": function (td, cellData, rowData, row, col) {
+                  var disabled = '';
+                  if(rowData.partida == null){
+                      disabled = 'disabled';
+                  }
+                  if(rowData.chegada == null){
+                      $(td).html("<button type='button'  "+disabled +" class='btn btn-primary btn-circle' data-target='#chegadaModal' data-toggle='modal' data-viagem='"+rowData.codViagem+"'>"+
+                          "<i class='fa fa-stop'></i>"+
+                          "</button>");
+                  }else{
+                      $(td).html(rowData.chegada);
+                  }
+              }
+          }],
+      });
 
-//        setInterval( function () {
-//            table.ajax.reload();
-//        }, 120000 );
-    });
+      //Atualizando a table viagens
+      setInterval(function () {
+          table.ajax.reload();
+      }, 120000);
+
+      //Criando o mapa
+      $('#viagemMapModal').on('shown.bs.modal', function(e) {
+          map = new google.maps.Map(document.getElementById('map-canvasPartida'), {
+              center: {
+                  lat: -22.397,
+                  lng: -44.644
+              },
+              zoom: 6
+          });
+
+          //Limpa os marcadores em caso de abrir uma nova viagem
+          //clearMarkers (null);
+
+          $('#codViagemIniciarHidden').val(e.relatedTarget.dataset.viagem);
+          console.info($('#codViagemIniciarHidden').val());
+
+          var infowindow = new google.maps.InfoWindow();
+          var marker;
+          var line;
+          var latLngOld = '';
+          var image;
+          var data = {
+              placa: placa,
+          };
+
+          var posicaoFlag = "";
+          var flag = 0;
+
+          $.getJSON('../data/getRotaViagem.php', data, function(json1) {
+              $.each(json1.positions, function(key, data) {
+                  if(data.icon!='pinStart.png' && data.icon!='pin.png') {
+                      image = {
+                          url: '../images/map/'+data.icon,
+                          origin: new google.maps.Point(0, 0),
+                          anchor: new google.maps.Point(4, 4),
+                          scaledSize: new google.maps.Size(8, 8)
+                      };
+                  }
+                  else {
+                      image = {
+                          url: '../images/map/'+data.icon,
+                          scaledSize: new google.maps.Size(35, 48)
+                      }
+                  }
+
+                  var latLng = new google.maps.LatLng(data.lat, data.lon);
+                  marker = new google.maps.Marker({
+                      center:     location,
+                      map:        map,
+                      position:   latLng,
+                      title:      data.placa,
+                      icon : image
+                  });
+                  var details = "Placa: " + data.placa + "<br />" +
+                      "Condutor: " + data.condutor + "<br />" +
+                      "Data: " + data.data_hora + "<br />" +
+                      "Vel.: " + data.velocidade;
+                  bindInfoWindow(marker, map, infowindow, details);
+                  markers.push(marker);
+
+                  if(latLngOld != '') {
+                      line = new google.maps.Polyline({
+                          path: [latLng, latLngOld],
+                          strokeOpacity: 0.8,
+                          strokeWeight: 2,
+                          strokeColor: '#f00',
+                          geodesic: true,
+                          map: map
+                      });
+                  }
+                  latLngOld = latLng;
+
+                  // centraliza o mapa na última latitude e longitude pesquisada
+                  map.setCenter (latLng);
+
+                  markers.push(marker);
+              });
+
+              image = {
+                  url: '../images/map/pinEnd.png',
+                  scaledSize: new google.maps.Size(35, 48)
+              }
+              marker.setIcon(image, marker);
+              // var markerCluster = new MarkerClusterer(map, markers);
+
+              $.each(json1.viagens, function(key, data) {
+
+                  image = '../images/map/'+data.poi;
+
+                  var latLng = new google.maps.LatLng(data.lat, data.lon);
+
+                  marker = new MarkerWithLabel({
+                      position: latLng,
+                      raiseOnDrag: true,
+                      map: map,
+                      icon : image,
+
+                      labelContent: data.ordemPrev+" | "+data.ordemExec,
+                      labelAnchor: new google.maps.Point(10, 0),
+                      labelClass: "labels" // the CSS class for the label
+                  });
+
+                  var details = "Referência: " + data.descRef + "<br />" +
+                      "Prev. Ini.: " + data.prevIni + "<br />" +
+                      "ID.: " + data.idPonto + "<br />" +
+                      "Data Ini.: " + data.dtIni + "<br />" +
+                      "Prev. Fim: " +data.prevFim + "<br />" +
+                      "Data Fim: " + data.dtFim;
+                  bindInfoWindow(marker, map, infowindow, details);
+              });
+
+              if (flag == 1) {
+                  map.setZoom (13);
+                  map.setCenter(latLng);
+              }
+          });
+
+      });
+
+      $('#chegadaModal').on('shown.bs.modal', function(e) {
+          map = new google.maps.Map(document.getElementById('map-canvasChegada'), {
+              center: {
+                  lat: -22.397,
+                  lng: -44.644
+              },
+              zoom: 6
+          });
+
+          //Limpa os marcadores em caso de abrir uma nova viagem
+          //clearMarkers (null);
+
+          $('#codViagemFinalizarHidden').val(e.relatedTarget.dataset.viagem);
+          console.info($('#codViagemFinalizarHidden').val());
+//
+//          var infowindow = new google.maps.InfoWindow();
+//          var marker;
+//          var line;
+//          var latLngOld = '';
+//          var image;
+//          var data = {
+//              placa: placa,
+//          };
+
+//          var posicaoFlag = "";
+//          var flag = 0;
+
+//          $.getJSON('../data/getRotaViagem.php', data, function(json1) {
+//              $.each(json1.positions, function(key, data) {
+//                  if(data.icon!='pinStart.png' && data.icon!='pin.png') {
+//                      image = {
+//                          url: '../images/map/'+data.icon,
+//                          origin: new google.maps.Point(0, 0),
+//                          anchor: new google.maps.Point(4, 4),
+//                          scaledSize: new google.maps.Size(8, 8)
+//                      };
+//                  }
+//                  else {
+//                      image = {
+//                          url: '../images/map/'+data.icon,
+//                          scaledSize: new google.maps.Size(35, 48)
+//                      }
+//                  }
+//
+//                  var latLng = new google.maps.LatLng(data.lat, data.lon);
+//                  marker = new google.maps.Marker({
+//                      center:     location,
+//                      map:        map,
+//                      position:   latLng,
+//                      title:      data.placa,
+//                      icon : image
+//                  });
+//                  var details = "Placa: " + data.placa + "<br />" +
+//                      "Condutor: " + data.condutor + "<br />" +
+//                      "Data: " + data.data_hora + "<br />" +
+//                      "Vel.: " + data.velocidade;
+//                  bindInfoWindow(marker, map, infowindow, details);
+//                  markers.push(marker);
+//
+//                  if(latLngOld != '') {
+//                      line = new google.maps.Polyline({
+//                          path: [latLng, latLngOld],
+//                          strokeOpacity: 0.8,
+//                          strokeWeight: 2,
+//                          strokeColor: '#f00',
+//                          geodesic: true,
+//                          map: map
+//                      });
+//                  }
+//                  latLngOld = latLng;
+//
+//                  // centraliza o mapa na última latitude e longitude pesquisada
+//                  map.setCenter (latLng);
+//
+//                  markers.push(marker);
+//              });
+//
+//              image = {
+//                  url: '../images/map/pinEnd.png',
+//                  scaledSize: new google.maps.Size(35, 48)
+//              }
+//              marker.setIcon(image, marker);
+//              // var markerCluster = new MarkerClusterer(map, markers);
+//
+//              $.each(json1.viagens, function(key, data) {
+//
+//                  image = '../images/map/'+data.poi;
+//
+//                  var latLng = new google.maps.LatLng(data.lat, data.lon);
+//
+//                  marker = new MarkerWithLabel({
+//                      position: latLng,
+//                      raiseOnDrag: true,
+//                      map: map,
+//                      icon : image,
+//
+//                      labelContent: data.ordemPrev+" | "+data.ordemExec,
+//                      labelAnchor: new google.maps.Point(10, 0),
+//                      labelClass: "labels" // the CSS class for the label
+//                  });
+//
+//                  var details = "Referência: " + data.descRef + "<br />" +
+//                      "Prev. Ini.: " + data.prevIni + "<br />" +
+//                      "ID.: " + data.idPonto + "<br />" +
+//                      "Data Ini.: " + data.dtIni + "<br />" +
+//                      "Prev. Fim: " +data.prevFim + "<br />" +
+//                      "Data Fim: " + data.dtFim;
+//                  bindInfoWindow(marker, map, infowindow, details);
+//              });
+//
+//              if (flag == 1) {
+//                  map.setZoom (13);
+//                  map.setCenter(latLng);
+//              }
+//          });
+
+      });
+  });
 </script>
 
 <!-- Bootstrap -->

@@ -2,61 +2,121 @@
 
     require_once ('../../../includes/OracleCielo.class.php');
 
-    $oraCielo           = new OracleCielo ();
-    $conexao            = $oraCielo->getCon();
-    $descricaoViagem    = $_REQUEST['descricaoViagem'];
-    $codVeiculo         = $_REQUEST['codVeiculo'];
-    $codReferenciaIni   = $_REQUEST['codReferenciaIni'];
-    $codReferenciaFim   = $_REQUEST['codReferenciaFim'];
-    $previsao           = $_REQUEST['previsao'];
+    $oraCielo   = new OracleCielo ();
+    $conexao    = $oraCielo->getCon();
+    $acao       = $_REQUEST['acao'];
 
-    list($ini, $fim) = explode(' - ', $previsao);
+    switch ($acao){
+        case 'finalizarViagem':
+            $codViagem = $_REQUEST['codViagem'];
 
-    //Insert viagem
-    $sqlInsertViagem = "
-        INSERT INTO help_track_viagem(
-          codigo_viagem,
-          local_ini,
-          local_fim,
-          data_hora_prev_partida,
-          data_hora_partida,
-          data_hora_prev_chegada,
-          data_hora_chegada,
-          status,
-          situacao
-        ) VALUES (
-          SEQ_HELP_TRACK_VIAGEM.nextval,
-          '".$codReferenciaIni."',
-          '".$codReferenciaFim."',
-          to_date('".$ini."', 'DD/MM/YYYY HH24:MI'),
-          null,
-          to_date('".$fim."', 'DD/MM/YYYY HH24:MI'),
-          null,
-          2,
-          2
-        )
-    ";
-    #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
+            $sqlFinalizarViagem = "
+                UPDATE help_track_viagem
+                SET situacao = 1, data_hora_chegada = SYSDATE
+                WHERE codigo_viagem = '".$codViagem."'
+            ";
 
-    $respostaInsertViagem = oci_parse($conexao, $sqlInsertViagem);
+            $resFinalizarViagem = oci_parse($conexao, $sqlFinalizarViagem);
 
-    if(!oci_execute($respostaInsertViagem)) {
-        echo 'Erro ao inserir a viagem. SQL: ' . $sqlInsertViagem;
+            if(!oci_execute($resFinalizarViagem)) {
+                $aux = oci_error($resFinalizarViagem);
+                echo $aux['message'];
+                exit();
+            }
+
+            oci_free_statement($resFinalizarViagem);
+
+            #Chamando a procedure para atualizar o status
+            $sqlProcedureViagem = "
+                 BEGIN
+                    PKG_HELP_TRACK.ATUALIZASTATUSVIAGEM;
+                    COMMIT;
+                 END;
+            ";
+            $resProcedureViagem = oci_parse($conexao, $sqlProcedureViagem);
+            if(!oci_execute($resProcedureViagem)) {
+                $aux = oci_error($resProcedureViagem);
+                echo $aux['message'];
+                exit();
+            }
+            oci_free_statement($resProcedureViagem);
+
+            break;
+
+        case 'iniciarViagem':
+            $codViagem = $_REQUEST['codViagem'];
+
+            $sqlIniciarViagem = "
+                UPDATE help_track_viagem
+                SET situacao = 3, data_hora_partida = SYSDATE
+                WHERE codigo_viagem = '".$codViagem."'
+            ";
+            #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
+
+            $resIniciarViagem = oci_parse($conexao, $sqlIniciarViagem);
+
+            if(!oci_execute($resIniciarViagem)) {
+                $aux = oci_error($resIniciarViagem);
+                echo $aux['message'];
+                exit();
+            }
+
+            oci_free_statement($resIniciarViagem);
+
+            break;
+        case 'novaViagem':
+            $descricaoViagem    = $_REQUEST['descricaoViagem'];
+            $codVeiculo         = $_REQUEST['codVeiculo'];
+            $codReferenciaIni   = $_REQUEST['codReferenciaIni'];
+            $codReferenciaFim   = $_REQUEST['codReferenciaFim'];
+            $previsao           = $_REQUEST['previsao'];
+
+            list($ini, $fim) = explode(' - ', $previsao);
+
+            //Insert viagem
+            $sqlInsertViagem = "
+                INSERT INTO help_track_viagem(
+                  codigo_viagem,
+                  local_ini,
+                  local_fim,
+                  data_hora_prev_partida,
+                  data_hora_partida,
+                  data_hora_prev_chegada,
+                  data_hora_chegada,
+                  status,
+                  situacao,
+                  descricao,
+                  veiculo
+                ) VALUES (
+                  SEQ_HELP_TRACK_VIAGEM.nextval,
+                  '".$codReferenciaIni."',
+                  '".$codReferenciaFim."',
+                  to_date('".$ini."', 'DD/MM/YYYY HH24:MI'),
+                  null,
+                  to_date('".$fim."', 'DD/MM/YYYY HH24:MI'),
+                  null,
+                  2,
+                  2,
+                  '".$descricaoViagem."',
+                  '".$codVeiculo."'
+                )
+            ";
+            #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
+
+            $resInsertViagem = oci_parse($conexao, $sqlInsertViagem);
+
+            if(!oci_execute($resInsertViagem)) {
+                $aux = oci_error($resInsertViagem);
+                echo $aux['message'];
+                exit();
+            }
+
+            oci_free_statement($resInsertViagem);
+
+            echo json_encode($status);
+            break;
+        default:
+            echo 'default';
+            break;
     }
-
-    $sqlUpdateVeiculo = "
-        UPDATE help_track_veiculo
-        SET viagem = SEQ_HELP_TRACK_VIAGEM.currval
-        WHERE codigo_veiculo = '".$codVeiculo."'
-    ";
-    #echo 'SQL UPDATE VEICULO: '.$sqlUpdateVeiculo; exit();
-
-    $respostaUpdateVeiculo = oci_parse($conexao, $sqlUpdateVeiculo);
-
-    if(!oci_execute($respostaUpdateVeiculo)) {
-        echo 'Erro no update de VEICULO. SQL: ' . $sqlUpdateVeiculo;
-    }
-
-    oci_free_statement($respostaInsertViagem);
-    oci_free_statement($respostaUpdateVeiculo);
     oci_close($conexao);

@@ -88,8 +88,8 @@
                   </li>
                   <li><a><i class="fa fa-cogs"></i> Manuten&ccedil;&atilde;o <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="form.html">Condutores</a></li>
-                      <li><a href="form_advanced.html">Ve&iacute;culos</a></li>
+                      <li><a href="#">Condutores</a></li>
+                      <li><a href="#">Ve&iacute;culos</a></li>
                       <li><a href="../tables/tableViagens.html">Viagens</a></li>
                     </ul>
                   </li>
@@ -120,15 +120,15 @@
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    <li><a href="javascript:;"> Seu Perfil</a></li>
+                    <li><a href="#"> Seu Perfil</a></li>
                     <li>
-                      <a href="javascript:;">
+                      <a href="#">
                         <!--<span class="badge bg-red pull-right">50%</span>-->
-                        <span>Configurações</span>
+                        <span>Configura&ccedil;&otilde;es</span>
                       </a>
                     </li>
-                    <li><a href="javascript:;">Ajuda</a></li>
-                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
+                    <li><a href="#">Ajuda</a></li>
+                    <li><a href="#"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
                   </ul>
                 </li>
               </ul>
@@ -165,7 +165,7 @@
                           <div class="item form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descricaoViagem">Descri&ccedil;&atilde;o <span class="required">*</span></label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                              <input type="text" id="descricaoViagem" class="form-control col-md-7 col-xs-12" name="descricaoViagem" required="required" type="text" placeholder="Informe uma descri&ccedil;&atilde;o para a viagem">
+                              <input type="text" id="descricaoViagem" class="form-control col-md-7 col-xs-12" name="descricaoViagem" data-validate-length-range="1,60" required="required" type="text" placeholder="Informe uma descri&ccedil;&atilde;o para a viagem">
                             </div>
                           </div>
 
@@ -175,7 +175,7 @@
                             <div class="col-md-6 col-sm-6 col-xs-12">
                               <select class="form-control" id="idComboVeiculo">
                                 <?
-                                $sqlVeiculos = "SELECT * FROM help_track_veiculo";
+                                $sqlVeiculos = "SELECT * FROM help_track_veiculo WHERE codigo_veiculo NOT IN (SELECT veiculo FROM HELP_TRACK_VIAGEM WHERE veiculo IS NOT NULL)";
                                 $respostaVeiculos = oci_parse ($conexao, $sqlVeiculos);
                                 oci_execute($respostaVeiculos);
                                 while (($rowVeiculo = oci_fetch_assoc($respostaVeiculos)) != false) {
@@ -230,7 +230,7 @@
                                     <div class="controls">
                                       <div class="input-prepend input-group">
                                         <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
-                                          <input type="text" name="reservation-time" id="reservation-time" class="form-control" data-ad-format="dd/mm/yyyy"/>
+                                          <input type="text" name="reservation-time" id="reservation-time" class="form-control col-md-7 col-xs-12" required="required" data-ad-format="DD/MM/YYYY HH:mm"/>
                                       </div>
                                     </div>
                                   </div>
@@ -243,7 +243,7 @@
 
                           <div class="item form-group">
                             <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                              <button class="btn btn-danger" id="buttonCancelar" type="button">Cancelar</button>
+                              <button class="btn btn-danger" id="buttonCancelar" type="button">Voltar</button>
                               <button type="submit" id="buttonSalvar" disabled="true" class="btn btn-success">Salvar</button>
                             </div>
                           </div>
@@ -296,7 +296,7 @@
 
             //Funcao para envio dos dados de viagem
             $('#buttonSalvar').click(function(){
-
+                $(this).html("Aguarde...");
                 var descricaoViagem,
                     codVeiculo,
                     codReferenciaIni,
@@ -313,6 +313,7 @@
                     type: 'POST',
                     url: '../exec/execViagem.php',
                     data: {
+                        acao: 'novaViagem',
                         descricaoViagem: descricaoViagem,
                         codVeiculo: codVeiculo,
                         codReferenciaIni: codReferenciaIni,
@@ -320,18 +321,35 @@
                         previsao: previsaoViagem
                     },
                     success: function(data) {
-                        $.teste  = new PNotify({
-                            title: 'Sucesso! ',
-                            text: 'Viagem cadastrada',
-                            type: 'success',
-                            styling: 'bootstrap3'
-                        });
-
+                        if(data != 'null'){
+                            new PNotify({
+                                title: 'Ops! ',
+                                text: 'Contate a equipe de suporte Help Track: <br>'+data,
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+                        }else{
+                            new PNotify({
+                                title: 'Sucesso! ',
+                                text: 'Viagem cadastrada.',
+                                type: 'success',
+                                styling: 'bootstrap3'
+                            });
+                            $('#idFormCadViagem').trigger("reset");
+                            $('#reservation-time').val('01/01/2017 12:00 - 01/01/2017 12:00');
+                        }
                     },
                     error: function () {
-                        alert("error");
+                        new PNotify({
+                            title: 'Ops! ',
+                            text: 'Houve algum problema com a sua comunica&ccedil;&atilde;o. Tente novamente',
+                            type: 'error',
+                            styling: 'bootstrap3'
+                        });
                     }
                 });
+                $(this).html("Salvar");
+                $(':input[type="submit"]').prop('disabled', true);
             });
         });
     </script>

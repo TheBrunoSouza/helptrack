@@ -104,15 +104,15 @@
                                 <span class=" fa fa-angle-down"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                <li><a href="javascript:;"> Seu Perfil</a></li>
+                                <li><a href="#"> Seu Perfil</a></li>
                                 <li>
-                                    <a href="javascript:;">
+                                    <a href="#">
                                         <!--<span class="badge bg-red pull-right">50%</span>-->
-                                        <span>Configurações</span>
+                                        <span>Configura&ccedil;&otilde;es</span>
                                     </a>
                                 </li>
-                                <li><a href="javascript:;">Ajuda</a></li>
-                                <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
+                                <li><a href="#">Ajuda</a></li>
+                                <li><a href="#"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -135,41 +135,45 @@
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                     <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Atrasados </a></span>
-                    <div class="count" style="color: crimson" id="totalAtrasados"></div>
+                    <div class="count" style="color: crimson" id="totalAtrasados">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                     <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">No prazo </a></span>
-                    <div class="count" style="color: #00A000" id="totalNoPrazo"></div>
+                    <div class="count" style="color: #00A000" id="totalNoPrazo">0</div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Aguardando Início </a></span>
+                    <div class="count" style="color: #faa400" id="totalAgurdandoInicio">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                     <span class="count_top"><i class="fa fa-automobile"></i><a href="tables/tableVeiculos.html"> Veículos</a></span>
-                    <div class="count" id="totalVeiculos"></div>
+                    <div class="count" id="totalVeiculos">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                     <span class="count_top"><i class="fa fa-user"></i><a href="tables/tableCondutores.html"> Condutores</a></span>
-                    <div class="count" id="totalCondutores"></div>
+                    <div class="count" id="totalCondutores">0</div>
                 </div>
             </div>
 
-            <div id="divEsqueda">
-                <div class="title_left">
-                    <h3>Finalizados Hoje</h3>
-                </div>
-                <div class="row tile_count">
-                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                        <span class="count_top"><i class="fa fa-road"></i><a href="form_advanced.html"> Viagens</a></span>
-                        <div class="count"></div>
-                    </div>
-                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                        <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Atrasos </a></span>
-                        <div class="count" style="color: crimson"></div>
-                    </div>
-                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                        <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">No Prazo </a></span>
-                        <div class="count" style="color: #00A000"></div>
-                    </div>
-                </div>
-            </div>
+            <!--<div id="divEsqueda">-->
+                <!--<div class="title_left">-->
+                    <!--<h3>Finalizados Hoje</h3>-->
+                <!--</div>-->
+                <!--<div class="row tile_count">-->
+                    <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
+                        <!--<span class="count_top"><i class="fa fa-road"></i><a href="form_advanced.html"> Viagens</a></span>-->
+                        <!--<div class="count" id="totalViagensDia">0</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
+                        <!--<span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Atrasos </a></span>-->
+                        <!--<div class="count" style="color: crimson" id="totalAtrasosDia">0</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
+                        <!--<span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">No Prazo </a></span>-->
+                        <!--<div class="count" style="color: #00A000" id="totalPrazoDia">0</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
 
             <div id="divDireita">
                 <div class="title_left">
@@ -178,15 +182,15 @@
                 <div class="row tile_count">
                     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                         <span class="count_top"><i class="fa fa-road"></i><a href="form_advanced.html"> Viagens</a></span>
-                        <div class="count"></div>
+                        <div class="count">0</div>
                     </div>
                     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                         <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Possível Atraso </a></span>
-                        <div class="count" style="color: crimson"></div>
+                        <div class="count" style="color: crimson">0</div>
                     </div>
                     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                         <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">Dentro do Prazo </a></span>
-                        <div class="count" style="color: #00A000"></div>
+                        <div class="count" style="color: #00A000">0</div>
                     </div>
                 </div>
             </div>
@@ -388,6 +392,10 @@
             $ ('#totalViagens').html (json1.totalViagens['TOTAL_VIAGENS']);
             $ ('#totalAtrasados').html (json1.totalAtrasados['TOTAL_ATRASADOS']);
             $ ('#totalNoPrazo').html (json1.totalNoPrazo['TOTAL_NO_PRAZO']);
+            $ ('#totalViagensDia').html (json1.totalViagensDia['TOTAL_VIAGENS_DIA']);
+            $ ('#totalAtrasosDia').html (json1.totalAtrasosDia['TOTAL_ATRASOS_DIA']);
+            $ ('#totalPrazoDia').html (json1.totalPrazoDia['TOTAL_PRAZO_DIA']);
+            $ ('#totalAgurdandoInicio').html (json1.totalAguardando['TOTAL_AGUARDANDO']);
         });
     });
 </script>

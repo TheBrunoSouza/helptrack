@@ -77,8 +77,9 @@
                             </li>
                             <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
-                                    <li><a href="form.html">Condutores</a></li>
-                                    <li><a href="form_advanced.html">Veículos</a></li>
+                                    <li><a href="tables/tableCondutores.html">Condutores</a></li>
+                                    <li><a href="#">Pontos de Referência</a></li>
+                                    <li><a href="#">Veículos</a></li>
                                     <li><a href="tables/tableViagens.html">Viagens</a></li>
                                 </ul>
                             </li>
@@ -89,7 +90,6 @@
             </div>
         </div>
 
-        <!-- top navigation -->
         <div class="top_nav">
             <div class="nav_menu">
                 <nav>
@@ -119,61 +119,61 @@
                 </nav>
             </div>
         </div>
-        <!-- /top navigation -->
 
-        <!-- CONTAINER -->
+        <!--=====================================================================================================-->
+        <!--DIV PRINCIPAL-->
+        <!--=====================================================================================================-->
         <div class="right_col" role="main">
 
-            <!------------------------------------------------------------------------------------------- TOTALIZADORES-->
             <div class="title_left">
                 <h3>Totalizador</h3>
             </div>
             <div class="row tile_count">
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-road"></i><a href="tables/tableViagens.html"> Viagens</a> </span>
-                    <div class="count" id="totalViagens"></div>
+                    <span class="count_top"><i class="fa fa-road"></i><a href="tables/tableViagens.html?param=todas"> Viagens</a> </span>
+                    <div class="count" id="totalViagens">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Atrasados </a></span>
+                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="tables/tableViagens.html?param=atrasadas">Atrasados </a></span>
                     <div class="count" style="color: crimson" id="totalAtrasados">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">No prazo </a></span>
+                    <span class="count_top"><i class="fa fa-check"></i> <a href="tables/tableViagens.html?param=prazo">No prazo </a></span>
                     <div class="count" style="color: #00A000" id="totalNoPrazo">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Aguardando Início </a></span>
+                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="tables/tableViagens.html?param=aguardando">Aguardando Início </a></span>
                     <div class="count" style="color: #faa400" id="totalAgurdandoInicio">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-automobile"></i><a href="tables/tableVeiculos.html"> Veículos</a></span>
+                    <span class="count_top"><i class="fa fa-automobile"></i><a href="#"> Veículos</a></span>
                     <div class="count" id="totalVeiculos">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-user"></i><a href="tables/tableCondutores.html"> Condutores</a></span>
+                    <span class="count_top"><i class="fa fa-user"></i><a href="#"> Condutores</a></span>
                     <div class="count" id="totalCondutores">0</div>
                 </div>
             </div>
 
-            <!--<div id="divEsqueda">-->
-                <!--<div class="title_left">-->
-                    <!--<h3>Finalizados Hoje</h3>-->
-                <!--</div>-->
-                <!--<div class="row tile_count">-->
-                    <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
-                        <!--<span class="count_top"><i class="fa fa-road"></i><a href="form_advanced.html"> Viagens</a></span>-->
-                        <!--<div class="count" id="totalViagensDia">0</div>-->
-                    <!--</div>-->
-                    <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
-                        <!--<span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Atrasos </a></span>-->
-                        <!--<div class="count" style="color: crimson" id="totalAtrasosDia">0</div>-->
-                    <!--</div>-->
-                    <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
-                        <!--<span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">No Prazo </a></span>-->
-                        <!--<div class="count" style="color: #00A000" id="totalPrazoDia">0</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
+            <div id="divEsqueda">
+                <div class="title_left">
+                    <h3>Finalizados Hoje</h3>
+                </div>
+                <div class="row tile_count">
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-road"></i><a href="tables/tableViagens.html?param=todasHoje"> Viagens</a></span>
+                        <div class="count" id="totalViagensDia">0</div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="tables/tableViagens.html?param=atrasosHoje">Atrasos </a></span>
+                        <div class="count" style="color: crimson" id="totalAtrasosDia">0</div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-check"></i> <a href="tables/tableViagens.html?param=prazoHoje">No Prazo </a></span>
+                        <div class="count" style="color: #00A000" id="totalPrazoDia">0</div>
+                    </div>
+                </div>
+            </div>
 
             <div id="divDireita">
                 <div class="title_left">
@@ -181,21 +181,27 @@
                 </div>
                 <div class="row tile_count">
                     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                        <span class="count_top"><i class="fa fa-road"></i><a href="form_advanced.html"> Viagens</a></span>
-                        <div class="count">0</div>
+                        <span class="count_top"><i class="fa fa-road"></i><a href="tables/tableViagens.html?param=viagensAgora"> Viagens</a></span>
+                        <div class="count" id="totalViagensAgora">0</div>
                     </div>
                     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                        <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="form_advanced.html">Possível Atraso </a></span>
-                        <div class="count" style="color: crimson">0</div>
+                        <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="tables/tableViagens.html?param=atrasadasAgora">Atrasada</a></span>
+                        <div class="count" style="color: crimson" id="totalAtrasosAgora">0</div>
                     </div>
                     <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                        <span class="count_top"><i class="fa fa-check"></i> <a href="form_advanced.html">Dentro do Prazo </a></span>
-                        <div class="count" style="color: #00A000">0</div>
+                        <span class="count_top"><i class="fa fa-check"></i> <a href="tables/tableViagens.html?param=prazoAgora">Dentro do Prazo </a></span>
+                        <div class="count" style="color: #00A000" id="totalPrazoAgora">0</div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                        <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="tables/tableViagens.html?param=podeAtrasarAgora">Pode Atrasar </a></span>
+                        <div class="count" style="color: #faa400" id="totalPodeAtrasarAgora">0</div>
                     </div>
                 </div>
             </div>
 
-            <!----------------------------------------------------------------------------- PANEL DE ATRASOS E RANKING -->
+            <!--=====================================================================================================-->
+            <!--GRAFICO DE ATRASOS E RANKING-->
+            <!--=====================================================================================================-->
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="dashboard_graph">
@@ -364,17 +370,7 @@
                 </div>
             </div>
             <br>
-            <!--FIM DAS OCORRENCIAS-->
         </div>
-
-        <!-- INICIO RODAPE -->
-        <!--<footer>-->
-        <!--<div class="pull-right">-->
-        <!--Help Track - Bruno Souza - Universidade de Passo Fundo - Pointer Cielo do Brasil-->
-        <!--</div>-->
-        <!--<div class="clearfix"></div>-->
-        <!--</footer>-->
-        <!-- FIM RODAPE -->
 
     </div>
 </div>
@@ -396,6 +392,10 @@
             $ ('#totalAtrasosDia').html (json1.totalAtrasosDia['TOTAL_ATRASOS_DIA']);
             $ ('#totalPrazoDia').html (json1.totalPrazoDia['TOTAL_PRAZO_DIA']);
             $ ('#totalAgurdandoInicio').html (json1.totalAguardando['TOTAL_AGUARDANDO']);
+            $ ('#totalViagensAgora').html (json1.totalViagensAgora['TOTAL_VIAGENS_AGORA']);
+            $ ('#totalAtrasosAgora').html (json1.totalAtrasosAgora['TOTAL_ATRASOS_AGORA']);
+            $ ('#totalPrazoAgora').html (json1.totalPrazoAgora['TOTAL_PRAZO_AGORA']);
+            $ ('#totalPodeAtrasarAgora').html (json1.totalPodeAtrasarAgora['TOTAL_PODEATRASAR_AGORA']);
         });
     });
 </script>

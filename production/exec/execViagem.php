@@ -64,6 +64,25 @@
             oci_free_statement($resIniciarViagem);
 
             break;
+        case 'excluirViagem':
+            $codViagem = $_REQUEST['codViagem'];
+
+            $sqlExcluirViagem = "
+                DELETE FROM HELP_TRACK_VIAGEM WHERE CODIGO_VIAGEM = '".$codViagem."'
+            ";
+            #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
+
+            $resExcluirViagem = oci_parse($conexao, $sqlExcluirViagem);
+
+            if(!oci_execute($resExcluirViagem)) {
+                $aux = oci_error($resExcluirViagem);
+                echo $aux['message'];
+                exit();
+            }
+
+            oci_free_statement($resExcluirViagem);
+
+            break;
         case 'novaViagem':
             $descricaoViagem    = $_REQUEST['descricaoViagem'];
             $codVeiculo         = $_REQUEST['codVeiculo'];

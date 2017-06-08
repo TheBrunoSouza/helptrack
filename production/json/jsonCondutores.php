@@ -9,6 +9,7 @@
           *
         FROM 
           HELP_TRACK_CONDUTOR
+        ORDER BY nome ASC
     ";
 
     $respostaCondutor = oci_parse($conexao, $sqlCondutores);
@@ -21,28 +22,19 @@
         #echo $sqlBancoCondutor;
         while (($row = oci_fetch_assoc($respostaCondutor)) != false) {
             $arrayCondutor[] = array(
-                "idBancoCondutor"   => $row['PLACA']
+                "codCondutor"   => $row['CODIGO_CONDUTOR'],
+                "nome"          => $row['NOME'],
+                "matricula"     => $row['MATRICULA'],
+                "totalAtrasos"  => $row['TOTAL_ATRASOS']
             );
         }
     }
 
-
-    $array['totalVeiculos']     = $totalVeiculos;
-    $array['totalCondutores']   = $totalCondutores;
-    $array['totalViagens']      = $totalViagens;
-    $array['totalAtrasados']    = $totalAtrasados;
-    $array['totalNoPrazo']      = $totalNoPrazo;
-
-    oci_free_statement($respostaTotalVeiculos);
-    oci_free_statement($respostaTotalCondutores);
-    oci_free_statement($respostaTotalViagens);
-    oci_free_statement($respostaTotalAtrasados);
-    oci_free_statement($respostaTotalNoPrazo);
+    oci_free_statement($respostaCondutor);
     oci_close($conexao);
 
+    $array['condutores'] = $arrayCondutor;
     $json = $array;
 
-    //start output
     header('Content-Type: application/x-json');
     echo json_encode($json);
-?>

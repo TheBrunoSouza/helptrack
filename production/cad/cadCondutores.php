@@ -88,10 +88,10 @@
                   </li>
                   <li><a><i class="fa fa-cogs"></i> Manuten&ccedil;&atilde;o <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
-                          <li><a href="../tables/tableCondutores.html">Condutores</a></li>
+                          <li><a href="form.html">Condutores</a></li>
                           <li><a href="#">Pontos de Referência</a></li>
                           <li><a href="#">Veículos</a></li>
-                          <li><a href="../tables/tableViagens.html">Viagens</a></li>
+                          <li><a href="tables/tableViagens.html">Viagens</a></li>
                       </ul>
                   </li>
                 </ul>
@@ -147,7 +147,7 @@
 
                 <div class="row x_title">
                   <div class="col-md-6">
-                    <h3>Cadastro de Viagens</h3>
+                    <h3>Cadastro de Condutores</h3>
                   </div>
                 </div>
 
@@ -161,84 +161,21 @@
                       </div>
                       <div class="x_content">
                         <br/>
-                        <form id="idFormCadViagem" data-parsley-validate class="form-horizontal form-label-left"  novalidate>
+                        <form id="idFormCadCondutor" data-parsley-validate class="form-horizontal form-label-left"  novalidate>
 
-                          <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descricaoViagem">Descri&ccedil;&atilde;o <span class="required">*</span></label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                              <input type="text" id="descricaoViagem" class="form-control col-md-7 col-xs-12" name="descricaoViagem" data-validate-length-range="1,60" required="required" type="text" placeholder="Informe uma descri&ccedil;&atilde;o para a viagem">
+                             <div class="item form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nome">Nome <span class="required">*</span></label>
+                               <div class="col-md-6 col-sm-6 col-xs-12">
+                                 <input type="text" id="nome" class="form-control col-md-7 col-xs-12" name="nome" data-validate-length-range="3,60" required="required" type="text" placeholder="">
+                               </div>
+                             </div>
+
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="matricula">Matricula </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="matricula" class="form-control col-md-7 col-xs-12" name="matricula" data-validate-length-range="1,60" type="text" placeholder="(Opcional)">
+                                </div>
                             </div>
-                          </div>
-
-                          <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ve&iacute;culo <span class="required">*</span></label>
-
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                              <select class="form-control" id="idComboVeiculo">
-                                <?
-                                $sqlVeiculos = "SELECT * FROM help_track_veiculo WHERE codigo_veiculo NOT IN (SELECT veiculo FROM HELP_TRACK_VIAGEM WHERE veiculo IS NOT NULL)";
-                                $respostaVeiculos = oci_parse ($conexao, $sqlVeiculos);
-                                oci_execute($respostaVeiculos);
-                                while (($rowVeiculo = oci_fetch_assoc($respostaVeiculos)) != false) {
-                                ?>
-                                    <option value="<?=$rowVeiculo['CODIGO_VEICULO']?>"><?=$rowVeiculo['PLACA']?></option>
-                                <? } ?>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ponto Inicial <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                              <select class="form-control" id="idComboReferenciaIni">
-                                  <?
-                                  $sqlReferenciaIni = "SELECT * FROM help_track_referencia ORDER BY CODIGO_REFERENCIA ASC";
-                                  $respostaReferenciaIni = oci_parse ($conexao, $sqlReferenciaIni);
-                                  oci_execute($respostaReferenciaIni);
-                                  while (($rowReferenciaIni  = oci_fetch_assoc($respostaReferenciaIni)) != false) {
-                                  ?>
-                                      <option value="<?=$rowReferenciaIni['CODIGO_REFERENCIA']?>"><?=$rowReferenciaIni['DESCRICAO']?></option>
-                                  <? } ?>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ponto Final <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                              <select class="form-control" id="idComboReferenciaFim">
-                                  <?
-                                  $sqlReferenciaFim = "SELECT * FROM help_track_referencia ORDER BY CODIGO_REFERENCIA DESC";
-                                  $respostaReferenciaFim = oci_parse ($conexao, $sqlReferenciaFim);
-                                  oci_execute($respostaReferenciaFim);
-                                  while (($rowReferenciaFim = oci_fetch_assoc($respostaReferenciaFim)) != false) {
-                                  ?>
-                                      <option value="<?=$rowReferenciaFim['CODIGO_REFERENCIA']?>"><?=$rowReferenciaFim['DESCRICAO']?></option>
-                                  <? } ?>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" > Previs&atilde;o de In&iacute;cio e Fim <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                              <form class="form-horizontal">
-                                <fieldset>
-                                  <div class="control-group">
-                                    <div class="controls">
-                                      <div class="input-prepend input-group">
-                                        <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
-                                          <input value="01/06/2017 12:00 - 01/06/2017 12:00" type="text" name="reservation-time" id="reservation-time" class="form-control col-md-7 col-xs-12" required="required"/>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </fieldset>
-                              </form>
-                            </div>
-                          </div>
 
                           <div class="ln_solid"></div>
 
@@ -273,82 +210,75 @@
 
             //Disable button salvar
             $('input[type="text"]').keyup(function() {
-                if($('#descricaoViagem').val() == '' || $('#descricaoViagem').val() == null){
+                if($('#nome').val() == '' || $('#nome').val() == null){
                     $(':input[type="submit"]').prop('disabled', true);
                 }else{
-                    if($(this).val() != '') {
-                        $(':input[type="submit"]').prop('disabled', false);
-                    }else{
-                        $(':input[type="submit"]').prop('disabled', true);
-                    }
+                    $(':input[type="submit"]').prop('disabled', false);
                 }
             });
 
             //Formatando a data da viagem
-            $(function() {
-                $('input[name="reservation-time"]').daterangepicker({
-                    timePicker: true,
-                    locale: {
-                        format: 'DD/MM/YYYY HH:mm'
-                    }
-                });
-            });
+//            $(function() {
+//                $('input[name="reservation-time"]').daterangepicker({
+//                    timePicker: true,
+//                    locale: {
+//                        format: 'DD/MM/YYYY HH:mm'
+//                    }
+//                });
+//            });
 
             //Funcao cancelar o cadastro de viagem
             $('#buttonCancelar').click(function(){
-                window.location.href = "../tables/tableViagens.html";
+                window.location.href = "../tables/tableCondutores.html";
             });
 
             //Funcao para envio dos dados de viagem
             $('#buttonSalvar').click(function(){
 
-                if($('#idComboReferenciaIni').val() == $ ('#idComboReferenciaFim').val()){
-                    new PNotify({
-                        title: 'Ops! ',
-                        text: 'Os pontos de inicio e fim devem ser diferentes.',
-                        type: 'error',
-                        styling: 'bootstrap3'
-                    });
-                    return;
-                }
-
-                if($('#descricaoViagem').val() == '' || $('#descricaoViagem').val() == null){
-                    new PNotify({
-                        title: 'Ops! ',
-                        text: "Voc&ecirc; deve preencher o campo 'Descri&ccedil;&atilde;o!'",
-                        type: 'error',
-                        styling: 'bootstrap3'
-                    });
-                    return;
-                }
+//                if($('#idComboReferenciaIni').val() == $ ('#idComboReferenciaFim').val()){
+//                    new PNotify({
+//                        title: 'Ops! ',
+//                        text: 'Os pontos de inicio e fim devem ser diferentes.',
+//                        type: 'error',
+//                        styling: 'bootstrap3'
+//                    });
+//                    return;
+//                }
+//
+//                if($('#descricaoViagem').val() == '' || $('#descricaoViagem').val() == null){
+//                    new PNotify({
+//                        title: 'Ops! ',
+//                        text: "Voc&ecirc; deve preencher o campo 'Descri&ccedil;&atilde;o!'",
+//                        type: 'error',
+//                        styling: 'bootstrap3'
+//                    });
+//                    return;
+//                }
 
                 $(this).html("Aguarde...");
 
-                var descricaoViagem,
-                    codVeiculo,
-                    codReferenciaIni,
-                    codReferenciaFim,
-                    previsaoViagem;
+//                var descricaoViagem,
+//                    codVeiculo,
+//                    codReferenciaIni,
+//                    codReferenciaFim,
+//                    previsaoViagem;
 
-                descricaoViagem     = $ ('#descricaoViagem').val();
-                codVeiculo          = $ ('#idComboVeiculo').val();
-                codReferenciaIni    = $ ('#idComboReferenciaIni').val();
-                codReferenciaFim    = $ ('#idComboReferenciaFim').val();
-                previsaoViagem      = $ ('#reservation-time').val();
+//                descricaoViagem     = $ ('#descricaoViagem').val();
+//                codVeiculo          = $ ('#idComboVeiculo').val();
+//                codReferenciaIni    = $ ('#idComboReferenciaIni').val();
+//                codReferenciaFim    = $ ('#idComboReferenciaFim').val();
+//                previsaoViagem      = $ ('#reservation-time').val();
 
                 $.ajax({
                     type: 'POST',
-                    url: '../exec/execViagem.php',
+                    url: '../exec/execCondutor.php',
                     data: {
-                        acao: 'novaViagem',
-                        descricaoViagem: descricaoViagem,
-                        codVeiculo: codVeiculo,
-                        codReferenciaIni: codReferenciaIni,
-                        codReferenciaFim: codReferenciaFim,
-                        previsao: previsaoViagem
+                        acao: 'novoCondutor',
+                        nome: $('#nome').val(),
+                        matricula: $('#matricula').val()
                     },
                     success: function(data) {
-                        if(data != 'null'){
+                        if(data != ''){
                             new PNotify({
                                 title: 'Ops! ',
                                 text: 'Contate a equipe de suporte Help Track: <br>'+data,
@@ -358,12 +288,11 @@
                         }else{
                             new PNotify({
                                 title: 'Sucesso! ',
-                                text: 'Viagem cadastrada.',
+                                text: 'Condutor cadastrado!',
                                 type: 'success',
                                 styling: 'bootstrap3'
                             });
-                            $('#idFormCadViagem').trigger("reset");
-                            $('#reservation-time').val('01/06/2017 12:00 - 01/06/2017 12:00');
+                            $('#idFormCadCondutor').trigger("reset");
                         }
                     },
                     error: function () {

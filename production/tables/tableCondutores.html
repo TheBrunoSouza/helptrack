@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Help Track | Gestor de Viagens </title>
-
+  <link rel="icon" href="../images/imagens/16x16/veiculo.png">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <!-- Bootstrap -->
   <link href="../../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
@@ -38,8 +39,41 @@
   <script src="../../vendors/datatables-plugins/dataTables.bootstrap.min.js"></script>
   <script src="../../vendors/datatables-responsive/dataTables.responsive.js"></script>
 
+  <!--Mapa Google-->
+  <script src="../js/maps/markerclusterer.js"></script>
+  <script src="../js/maps/markerwithlabel.js" async></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0oFYKDpD5zmMsUZJkJfv8SKiEu3JJ_ZA" async defer></script>
+
   <!-- Custom Theme Style -->
   <link href="../../build/css/custom.min.css" rel="stylesheet">
+
+  <style type="text/css">
+    html, body, #map-canvas {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    #map-canvas {
+      width:860px;
+      height:480px;
+    }
+
+    .labels {
+      color: white;
+      background-color: gray;
+      font-family: "Lucida Grande", "Arial", sans-serif;
+      font-size: 8px;
+      text-align: center;
+      width: 30px;
+      white-space: nowrap;
+    }
+
+    .toolbar {
+      float:left;
+    }
+  </style>
+
 </head>
 
 <body class="nav-md">
@@ -70,14 +104,16 @@
             <ul class="nav side-menu">
               <li><a><i class="fa fa-bar-chart"></i> Operação <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                  <li><a href="../index.html">Dashboard</a></li>
+                  <li><a href="../dashboard.html">Dashboard</a></li>
                   <li><a href="#">Mapa</a></li>
                 </ul>
               </li>
               <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
                   <li><a href="form.html">Condutores</a></li>
-                  <li><a href="form_advanced.html">Veículos</a></li>
+                  <li><a href="#">Pontos de Referência</a></li>
+                  <li><a href="#">Veículos</a></li>
+                  <li><a href="tableViagens.html">Viagens</a></li>
                 </ul>
               </li>
             </ul>
@@ -87,7 +123,9 @@
       </div>
     </div>
 
-    <!-- top navigation -->
+    <!-- =========================================================================================================== -->
+    <!-- NEVAGAÇÃO DO TOPO -->
+    <!-- =========================================================================================================== -->
     <div class="top_nav">
       <div class="nav_menu">
         <nav>
@@ -102,159 +140,629 @@
                 <span class=" fa fa-angle-down"></span>
               </a>
               <ul class="dropdown-menu dropdown-usermenu pull-right">
-                <li><a href="javascript:;"> Seu Perfil</a></li>
+                <li><a href="#"> Seu Perfil</a></li>
                 <li>
-                  <a href="javascript:;">
+                  <a href="#">
                     <!--<span class="badge bg-red pull-right">50%</span>-->
-                    <span>Configurações</span>
+                    <span>Configura&ccedil;&otilde;es</span>
                   </a>
                 </li>
-                <li><a href="javascript:;">Ajuda</a></li>
-                <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
+                <li><a href="#">Ajuda</a></li>
+                <li><a href="#"><i class="fa fa-sign-out pull-right"></i> Sair</a></li>
               </ul>
             </li>
           </ul>
         </nav>
       </div>
     </div>
-    <!-- /top navigation -->
 
-    <!-- CONTAINER -->
+    <!-- =========================================================================================================== -->
+    <!-- DIV PRINCIPAL -->
+    <!-- =========================================================================================================== -->
     <div class="right_col" role="main">
-
-      <!-- PANEL DE ATRASOS E RANKING -->
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="dashboard_graph">
 
-
-
-                <button class="btn btn-primary" type="button" style="margin-left: 90%">Novo Condutor</button>
-
-
-
-            <!--ATRASOS-->
+            <!-- =================================================================================================== -->
+            <!-- TABELA DE VIAGENS -->
+            <!-- =================================================================================================== -->
             <div class="row x_title">
               <div class="col-md-6">
                 <h3>Condutores</h3>
               </div>
             </div>
-
+            <br>
+            <button id="buttonNovaViagem" class="btn btn-primary" type="button" onclick="novaViagem()">Novo Condutor</button>
+            <br>
+            <br>
             <div class="row">
               <div class="col-lg-12 col-xs-12">
                 <table class="table table-striped table-bordered table-hover" id="idDataTablesViagem" style="width: 100%">
                   <thead>
                   <tr>
-                    <th data-field="placa" title="Placa"> Nome </th>
-                    <th data-field="situacao" title="Situação"> Matrícula </th>
-                    <th data-field="condutor" title="Placa"> Veículo </th>
-                    <th title="Editar Condutor"> # </th>
+                    <th data-field="codCondutor" title=codCondutor"></th>
+                    <th data-field="nome" title="Nome">Nome</th>
+                    <th data-field="matricula" title="Matricula">Matricula</th>
+                    <th data-field="totalAtrasos" title="Total de Atrasos"> Total de Atrasos </th>
+                    <th data-field="apagar" title="apagar">Desativar</th>
                   </tr>
                   </thead>
                 </table>
               </div>
             </div>
 
+            <!-- =================================================================================================== -->
+            <!-- PARTIDA DA VIAGEM -->
+            <!-- =================================================================================================== -->
+            <div class="modal fade" id="viagemMapModal" style="height: 800px;">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="">X</button>
+                    <h4 class="modal-title">Posi&ccedil;&atilde;o Atual do Ve&iacute;culo</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container">
+                      <div class="row">
+                        <!-- Na div abaixo é carregado um mapa do Google Maps através do Jquery -->
+                        <div id="map-canvasPartida" class="" style="height: 400px;"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button id="buttonIniciarViagem" class="btn btn-primary" type="button" style="margin-left: 70%" onclick="iniciarViagem()">Iniciar</button>
+                  </div>
+                  <input type="text" id="codViagemIniciarHidden" hidden="true">
+                </div>
+              </div>
+            </div>
+
+            <!-- =================================================================================================== -->
+            <!-- CHEGADA DE VIAGEM -->
+            <!-- =================================================================================================== -->
+            <div class="modal fade" id="chegadaModal" style="height: 800px;">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="">X</button>
+                    <h4 class="modal-title">Rota realizada:</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container">
+                      <div class="row">
+                        <!-- Na div abaixo é carregado um mapa do Google Maps através do Jquery -->
+                        <div id="map-canvasChegada" class="" style="height: 400px;"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button id="buttonFinalizarViagem" class="btn btn-danger" type="button" style="margin-left: 70%" onclick="finalizarViagem()">Encerrar</button>
+                  </div>
+                  <input type="text" id="codViagemFinalizarHidden" hidden="true">
+                </div>
+              </div>
+            </div>
+
+            <!-- =================================================================================================== -->
+            <!-- DIV DE CONFIRMAÇÃO DE EXCLUSÃO -->
+            <!-- =================================================================================================== -->
+            <div class="modal fade" id="confirmExcluir">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="">X</button>
+                    <h4 class="modal-title">Confirmação:</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container">
+                      <div class="row">
+                        <p>Deseja realmente excluir este condutor?</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button id="buttonExcluirViagem" class="btn btn-danger" type="button" style="margin-left: 70%" onclick="excluirViagem()">Excluir</button>
+                  </div>
+                  <input type="text" id="codViagemExcluirHidden" hidden="true">
+                </div>
+              </div>
+            </div>
             <div class="clearfix"></div>
           </div>
         </div>
       </div>
       <br>
     </div>
-
-    <!-- INICIO RODAPE -->
-    <footer>
-      <div class="pull-right">
-        Help Track - Bruno Souza - Universidade de Passo Fundo - Pointer Cielo do Brasil
-      </div>
-      <div class="clearfix"></div>
-    </footer>
-    <!-- FIM RODAPE -->
-
   </div>
 </div>
 
 <script type="text/javascript">
+
+    function novaViagem(){
+        window.location.href = "../cad/cadCondutores.php";
+    }
+//
+//    function iniciarViagem(){
+//        $.ajax({
+//            type: 'post',
+//            url: '../exec/execViagem.php',
+//            data: {
+//                "acao": 'iniciarViagem',
+//                "codViagem": $('#codViagemIniciarHidden').val()
+//            },
+//            success: function () {
+//                alert ("Viagem Iniciada!");
+//                $('#viagemMapModal').modal('hide');
+//                location.reload();
+//            }
+//        });
+//    }
+//
+//    function finalizarViagem(){
+//        $.ajax({
+//            type: 'post',
+//            url: '../exec/execViagem.php',
+//            data: {
+//                "acao": 'finalizarViagem',
+//                "codViagem": $('#codViagemFinalizarHidden').val()
+//            },
+//            success: function () {
+//                alert ("Viagem Finalizada!");
+//                $('#chegadaModal').modal('hide');
+//                location.reload();
+//            }
+//        });
+//    }
+//
+//    function excluirViagem(){
+//        $.ajax({
+//            type: 'post',
+//            url: '../exec/execViagem.php',
+//            data: {
+//                "acao": 'excluirViagem',
+//                "codViagem": $('#codViagemExcluirHidden').val()
+//            },
+//            success: function () {
+//                alert ("Viagem Excluída!");
+//                $('#confirmExcluir').modal('hide');
+//                location.reload();
+//            }
+//        });
+//    }
+
+    var map, mapDetalhes;
+    var infoWindow, infoWindowDetalhes;
+    var marker, markerDetalhes;
+    var markers = [];
+    var markersRef = [];
+    var markerCluster;
+    var icon;
+    var posicoesLatitude = [];
+    var posicoesLongitude = [];
+    var i = 0;
+
+
     $(document).ready(function() {
 
-//        var table = $('#idDataTablesViagem').DataTable({
-//            destroy: true,
-//            responsive: true,
-//            processing: true,
-//            oScroller: {
-//                "loadingIndicator": true
-//            },
-//            ajax: {
-//                url: 'json/jsonViagens.php',
-//                dataSrc: 'viagens'
-//            },
-//            columns: [
-//                { "data": "idViagem"},
-//                { "data": "placa" },
-//                { "data": "situacao" },
-//                {
-//                    sortable: false,
-//                    "render": function ( data, type, full, meta ) {
-//                        var buttonID = full.idViagem;
-//                        return "<button id='"+buttonID+"' type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#formModal' data-idviagem='"+buttonID+"' onclick='validaEGrava("+buttonID+")''>"+
-//                            "<i class='fa fa-edit'></i>"+
-//                            "</button>";
-//                    }
-//                },
-//                { "data": "prevIni" },
-//                { "data": "dtIni" },
-//                { "data": "prevFim" },
-//                { "data": "dtFim", "orderable": false },
-//                { "data": "refIni" },
-//                { "data": "refFim" },
-//                { "data": "distancia", "orderable": false },
-//                { "data": "ocorrencias", "orderable": false },
-//                {  sortable: false, "data": "totReal", "orderable": false },
-//                {
-//                    sortable: false,
-//                    "render": function ( data, type, full, meta ) {
-//                        var buttonID = full.idViagem;
+//        var getUrlParameter = function getUrlParameter(sParam) {
+//            var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+//                sURLVariables = sPageURL.split('&'),
+//                sParameterName,
+//                i;
 //
+//            for (i = 0; i < sURLVariables.length; i++) {
+//                sParameterName = sURLVariables[i].split('=');
 //
-//                        return "<button id='"+buttonID+"' type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#viagemDetalModal' data-idviagem='"+buttonID+"'>"+
-//                            "<i class='fa fa-list'></i>"+
-//                            "</button>";
-//                    }
-//                },
-//                {
-//                    sortable: false,
-//                    "render": function ( data, type, full, meta ) {
-//                        var buttonID = full.idViagem;
-//                        var plc = full.placa;
-//                        return "<button type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#viagemMapModal' data-idviagem='"+buttonID+"' data-placa='"+plc+"'>"+
-//                            "<i class='fa fa-map-marker'></i>"+
-//                            "</button>";
-//                    }
+//                if (sParameterName[0] === sParam) {
+//                    return sParameterName[1] === undefined ? true : sParameterName[1];
 //                }
-//            ]
-//            ,
-//            "columnDefs": [ {
-//                "targets": 0,
-//                "createdCell": function (td, cellData, rowData, row, col) {
-//                    $(td).css('background', rowData.color);
-//                }
-//            }],
-//          /*                "dom": '<"dtwcHeader fg-toolbar ui-toolbar ui-widget-header ui-helper-clearfix ui-corner-tl ui-corner-tr"<"#reloadBtn">lfr>t<"fg-toolbar ui-toolbar ui-widget-header ui-helper-clearfix ui-corner-bl ui-corner-br"ip>'
-//           */
-//        });
-      /*
-       $('div.dtwcHeader').prepend('<button id="reloadBtn">Reload</button>');
-       $('#reloadBtn').html('Reload').button().click(function (event) {
-       $(this).prop('disabled', true);
-       table.ajax.reload(function (json) {
-       $('#reloadBtn').prop('disabled', false);
-       });
-       });
-       */
+//            }
+//        };
 
-//        setInterval( function () {
+//        var param = getUrlParameter('param');
+
+        var table = $('#idDataTablesViagem').DataTable({
+//            "order": [
+//                [ , "asc" ]
+//            ],
+            "bJQueryUI": true,
+            "oLanguage": {
+                "sProcessing":   "Processando...",
+                "sLengthMenu":   "Exibir _MENU_ registros",
+                "sZeroRecords":  "Não foram encontrados resultados",
+                "sInfo":         "Exibindo de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty":    "Nenhum condutor encontrado...",
+                "sInfoFiltered": "",
+                "sInfoPostFix":  "",
+                "sSearch":       "Buscar:",
+                "sUrl":          "",
+                "oPaginate": {
+                    "sFirst":    "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext":     "Seguinte",
+                    "sLast":     "Último"
+                }
+            },
+            destroy: true,
+            responsive: true,
+            //processing: true,
+            oScroller: {
+                "loadingIndicator": true
+            },
+            ajax: {
+                url: '../json/jsonCondutores.php',
+                dataSrc: 'condutores',
+//                data: [
+//                    {'param': param}
+//                ]
+            },
+            columns: [
+                { "data": "codCondutor"},
+                { "data": "nome" },
+                { "data": "matricula" },
+                { "data": "totalAtrasos" },
+                {
+                    //Excluir
+                    sortable: false,
+                    "render": function (data, type, full, meta) {
+                        var html = "<button type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#confirmExcluir' data-viagem='"+full.codViagem+"'>"+
+                            "<i class='fa fa-remove'></i>"+
+                            "</button>";
+                        return (html);
+                    }
+                }
+            ],
+            //Cores de status
+            "columnDefs": [
+                {
+                    "targets": 3,
+                    "createdCell": function (td, cellData, rowData, row, col) {
+//                        var colorBackground = "";
+//                        var colorFont = "";
+//                        switch (rowData.codStatusViagem){
+//                            case '1':
+//                                colorBackground = '#ff4d4d';
+//                                colorFont = '#ffffff';
+//                                break;
+//                            case '2':
+//                                colorBackground = '#3399ff';
+//                                colorFont = '#333333'
+//                                break;
+//                            case '3':
+//                                colorBackground = '#ffb84d';
+//                                colorFont = '#333333';
+//                                break;
+//                        }
+//                        $(td).css('background-color', colorBackground);
+//                        $(td).css('color', colorFont);
+                    }
+                }
+            ]
+        });
+
+        //Atualizando a table viagens
+//        setInterval(function () {
 //            table.ajax.reload();
-//        }, 120000 );
+//        }, 60000);
+
+        //Modal de exclusão
+        $('#confirmExcluir').on('shown.bs.modal', function(e) {
+            $('#codViagemExcluirHidden').val(e.relatedTarget.dataset.viagem);
+        });
+
+        //Modal de partida
+        $('#viagemMapModal').on('shown.bs.modal', function(e) {
+            map = new google.maps.Map(document.getElementById('map-canvasChegada'), {
+                center: {
+                    lat: -22.397,
+                    lng: -44.644
+                },
+                zoom: 8
+            });
+
+            $('#codViagemFinalizarHidden').val(e.relatedTarget.dataset.viagem);
+
+            var infowindow = new google.maps.InfoWindow();
+            var marker;
+            var line;
+            var latLngOld = '';
+            var image;
+            var data = {
+                codReferenciaIni: e.relatedTarget.dataset.refini,
+                codReferenciaFim: e.relatedTarget.dataset.reffim
+            };
+
+            var posicaoFlag = "";
+            var flag = 0;
+
+            infoWindow = new google.maps.InfoWindow();
+
+            //Buscando as referencias da viagem
+            $.getJSON('../json/jsonReferencia.php', data, function (json1) {
+
+                $.each(json1.referencias, function(key, data) {
+
+                    if(flag == 0){
+                        img = "flag_blue";
+                    }else{
+                        img = "flag_red";
+                    }
+                    image = {
+                        url: '../images/imagens/16x16/'+img+'.png',
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(4, 4),
+                        scaledSize: new google.maps.Size(16, 16)
+                    };
+
+                    var latLng = new google.maps.LatLng(data.lat, data.lon);
+
+                    markerRef = new google.maps.Marker({
+                        center:     location,
+                        map:        map,
+                        position:   latLng,
+                        //title:      data.placa,
+                        icon : image
+                    });
+
+                    var details =
+                        "<div>" +
+                        "<p><b>Local:</b> " + data.data_hora + "</p>" +
+                        "<p><b>Lat</b>: " + data.lat + "</p>" +
+                        "<p><b>Lon</b>: " + data.lon + "</p>";
+                    bindInfoWindow(markerRef, map, infowindow, details);
+
+                    markersRef.push(markerRef);
+
+                    //centraliza o mapa na última latitude e longitude pesquisada
+                    map.setCenter (latLng);
+
+                    //Adiciona os pontos
+                    markersRef.push(markerRef);
+
+                    flag = 1;
+                });
+            });
+
+
+            var dados =
+                {
+                    placa: e.relatedTarget.dataset.placa,
+                    primeiraPosicao: 'T'
+                };
+
+            var infowindow = new google.maps.InfoWindow();
+            var marker;
+            var line;
+            var latLngOld = '';
+            var image;
+            var posicaoFlag = "";
+            var flag = 0;
+
+            map = new google.maps.Map(document.getElementById('map-canvasPartida'), {
+                center: {
+                    lat: -22.397,
+                    lng: -44.644
+                },
+                zoom: 6
+            });
+
+            //Limpa os marcadores em caso de abrir uma nova viagem
+            //clearMarkers (null);
+
+            $('#codViagemIniciarHidden').val(e.relatedTarget.dataset.viagem);
+
+            $.getJSON('../json/jsonRota.php', dados, function (json1) {
+
+                $.each(json1.viagens, function(key, data) {
+
+                    if(data.icon!='pinStart.png' && data.icon!='pin.png') {
+                        image = {
+                            url: '../images/map/bulletGreen.png',
+                            origin: new google.maps.Point(0, 0),
+                            anchor: new google.maps.Point(4, 4),
+                            scaledSize: new google.maps.Size(8, 8)
+                        };
+                    }
+                    else {
+                        image = {
+                            url: '../images/map/bulletGreen.png',
+                            scaledSize: new google.maps.Size(35, 48)
+                        }
+                    }
+
+                    var latLng = new google.maps.LatLng(data.lat, data.lon);
+                    marker = new google.maps.Marker({
+                        center:     location,
+                        map:        map,
+                        position:   latLng,
+//                      title:      data.placa,
+                        icon : image
+                    });
+                    var details =
+                        "<div data-placa='" + data.veiculo + "'>" +
+                        "<p><b>Veiculo</b> " + data.veiculo + "</p>" +
+                        "<p><b>Data Hora</b> " + data.data_hora + "</p>" +
+                        "<p><b>Lat</b>: " + data.lat + "</p>" +
+                        "<p><b>Lon</b>: " + data.lon + "</p>";
+                    bindInfoWindow(marker, map, infowindow, details);
+                    markers.push(marker);
+
+                    //Definindo o default
+                    if(latLngOld != '') {
+                        line = new google.maps.Polyline({
+                            path: [latLng, latLngOld],
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            strokeColor: '#f00',
+                            geodesic: true,
+                            map: map
+                        });
+                    }
+                    latLngOld = latLng;
+
+                    //centraliza o mapa na última latitude e longitude pesquisada
+                    map.setCenter (latLng);
+
+                    //Adiciona os pontos
+                    markers.push(marker);
+                });
+
+                //ULTIMO PONTO
+                image = {
+                    url: '../images/map/ponto_atual.png',
+                    scaledSize: new google.maps.Size(35, 48)
+                }
+                marker.setIcon(image, marker);
+            });
+
+
+        });
+
+        //Modal de chegada
+        $('#chegadaModal').on('shown.bs.modal', function(e) {
+            map = new google.maps.Map(document.getElementById('map-canvasChegada'), {
+                center: {
+                    lat: -22.397,
+                    lng: -44.644
+                },
+                zoom: 8
+            });
+
+            $('#codViagemFinalizarHidden').val(e.relatedTarget.dataset.viagem);
+
+            var infowindow = new google.maps.InfoWindow();
+            var marker;
+            var line;
+            var latLngOld = '';
+            var image;
+            var data = {
+                codReferenciaIni: e.relatedTarget.dataset.refini,
+                codReferenciaFim: e.relatedTarget.dataset.reffim
+            };
+
+            var posicaoFlag = "";
+            var flag = 0;
+
+            infoWindow = new google.maps.InfoWindow();
+
+            //Buscando as referencias da viagem
+            $.getJSON('../json/jsonReferencia.php', data, function (json1) {
+
+                $.each(json1.referencias, function(key, data) {
+
+                    if(flag == 0){
+                        img = "flag_blue";
+                    }else{
+                        img = "flag_red";
+                    }
+                    image = {
+                        url: '../images/imagens/16x16/'+img+'.png',
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(4, 4),
+                        scaledSize: new google.maps.Size(16, 16)
+                    };
+
+                    var latLng = new google.maps.LatLng(data.lat, data.lon);
+
+                    markerRef = new google.maps.Marker({
+                        center:     location,
+                        map:        map,
+                        position:   latLng,
+                        //title:      data.placa,
+                        icon : image
+                    });
+
+                    var details =
+                        "<div>" +
+                        "<p><b>Local:</b> " + data.data_hora + "</p>" +
+                        "<p><b>Lat</b>: " + data.lat + "</p>" +
+                        "<p><b>Lon</b>: " + data.lon + "</p>";
+                    bindInfoWindow(markerRef, map, infowindow, details);
+
+                    markersRef.push(markerRef);
+
+                    //centraliza o mapa na última latitude e longitude pesquisada
+                    map.setCenter (latLng);
+
+                    //Adiciona os pontos
+                    markersRef.push(markerRef);
+
+                    flag = 1;
+                });
+            });
+
+            var dataRota = {
+                placa: e.relatedTarget.dataset.placa
+            };
+
+            $.getJSON('../json/jsonRota.php', dataRota, function (json1) {
+
+                $.each(json1.viagens, function(key, data) {
+
+                    image = {
+                        url: '../images/map/bulletGreen.png',
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(4, 4),
+                        scaledSize: new google.maps.Size(8, 8)
+                    };
+
+                    var latLng = new google.maps.LatLng(data.lat, data.lon);
+
+                    marker = new google.maps.Marker({
+                        center:     location,
+                        map:        map,
+                        position:   latLng,
+                        title:      data.placa,
+                        icon : image
+                    });
+
+                    var details =
+                        "<div data-placa='" + data.veiculo + "'>" +
+                        "<p><b>Veiculo</b> " + data.veiculo + "</p>" +
+                        "<p><b>Data Hora</b> " + data.data_hora + "</p>" +
+                        "<p><b>Lat</b>: " + data.lat + "</p>" +
+                        "<p><b>Lon</b>: " + data.lon + "</p>";
+
+                    bindInfoWindow(marker, map, infowindow, details);
+
+                    markers.push(marker);
+
+                    //Ligando pontos
+                    if(latLngOld != '') {
+                        line = new google.maps.Polyline({
+                            path: [latLng, latLngOld],
+                            strokeOpacity: 2,
+                            strokeWeight: 2,
+                            strokeColor: '#5763ff',
+                            geodesic: true,
+                            map: map
+                        });
+                    }
+                    latLngOld = latLng;
+
+                    //centraliza o mapa na última latitude e longitude pesquisada
+                    map.setCenter (latLng);
+
+                    //Adiciona os pontos
+                    markers.push(marker);
+                });
+
+                //ULTIMO PONTO
+                image = {
+                    url: '../images/map/ponto_atual.png',
+                    scaledSize: new google.maps.Size(35, 48)
+                }
+                marker.setIcon(image, marker);
+            });
+        });
+
+        function bindInfoWindow(marker, map, infowindow, strDescription) {
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.setContent(strDescription);
+                infowindow.open(map, marker);
+            });
+        }
     });
 </script>
 

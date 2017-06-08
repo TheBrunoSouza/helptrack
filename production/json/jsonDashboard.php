@@ -63,7 +63,7 @@
           HELP_TRACK_VIAGEM
         WHERE
           status = 2
-          AND processada = 'F' 
+          --AND processada = 'F' 
     ";
 
     $respostaTotalNoPrazo = oci_parse($conexao, $sqlTotalNoPrazo);
@@ -119,7 +119,7 @@
     //Viagens atrasados hoje
     $sqlTotalAtrasosDia = "
             SELECT
-          count(*) AS total_atraso_dia
+          count(*) AS total_atrasos_dia
         FROM
           HELP_TRACK_VIAGEM
           WHERE trunc(data_hora_chegada) = to_char(SYSDATE, 'DD/MM/YYYY')
@@ -148,6 +148,74 @@
         $totalPrazoDia = oci_fetch_assoc($respostaTotalPrazoDia);
     }
 
+    //Viagens acontecendo agora
+    $sqlViagensAgora = "
+                    SELECT
+                  count(*) AS total_viagens_agora
+                FROM
+                  HELP_TRACK_VIAGEM
+                  WHERE 
+                  SITUACAO = 3
+                ";
+
+    $respostaTotalViagensAgora = oci_parse($conexao, $sqlViagensAgora);
+
+    if(oci_execute($respostaTotalViagensAgora)){
+        $totalViagensAgora = oci_fetch_assoc($respostaTotalViagensAgora);
+    }
+
+    //Viagens atrasos agora
+    $sqlAtrasosAgora = "
+                        SELECT
+                      count(*) AS total_atrasos_agora
+                    FROM
+                      HELP_TRACK_VIAGEM
+                      WHERE 
+                      situacao = 3
+                      and status = 1
+                    ";
+
+    $respostaTotalAtrasosAgora = oci_parse($conexao, $sqlAtrasosAgora);
+
+    if(oci_execute($respostaTotalAtrasosAgora)){
+        $totalAtrasosAgora = oci_fetch_assoc($respostaTotalAtrasosAgora);
+    }
+
+
+    //Viagens prazo agora
+    $sqlPrazoAgora = "
+                        SELECT
+                      count(*) AS total_prazo_agora
+                    FROM
+                      HELP_TRACK_VIAGEM
+                      WHERE 
+                      situacao = 3
+                      and status = 2
+                    ";
+
+    $respostaTotalPrazoAgora = oci_parse($conexao, $sqlPrazoAgora);
+
+    if(oci_execute($respostaTotalPrazoAgora)){
+        $totalPrazoAgora = oci_fetch_assoc($respostaTotalPrazoAgora);
+    }
+
+    //Viagens pode atrasar agora
+    $sqlPodeAtrasarAgora = "
+                            SELECT
+                          count(*) AS total_podeatrasar_agora
+                        FROM
+                          HELP_TRACK_VIAGEM
+                          WHERE 
+                          situacao = 3
+                          and status = 3
+                        ";
+
+    $respostaTotalPodeAtrasarAgora = oci_parse($conexao, $sqlPodeAtrasarAgora);
+
+    if(oci_execute($respostaTotalPodeAtrasarAgora)){
+        $totalPodeAtrasarAgora = oci_fetch_assoc($respostaTotalPodeAtrasarAgora);
+    }
+
 
     $array['totalVeiculos']     = $totalVeiculos;
     $array['totalCondutores']   = $totalCondutores;
@@ -158,6 +226,10 @@
     $array['totalAtrasosDia']   = $totalAtrasosDia;
     $array['totalPrazoDia']     = $totalPrazoDia;
     $array['totalAguardando']   = $totalAguardando;
+    $array['totalViagensAgora'] = $totalViagensAgora;
+    $array['totalAtrasosAgora'] = $totalAtrasosAgora;
+    $array['totalPrazoAgora']   = $totalPrazoAgora;
+    $array['totalPodeAtrasarAgora']   = $totalPodeAtrasarAgora;
 
     oci_free_statement($respostaTotalVeiculos);
     oci_free_statement($respostaTotalCondutores);

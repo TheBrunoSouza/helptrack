@@ -86,7 +86,9 @@
             situacao_viagem.descricao as situacao,
             situacao_viagem.codigo_situacao_viagem,
             veiculo.placa,
-            veiculo.codigo_veiculo
+            veiculo.codigo_veiculo,
+            (SELECT nome FROM HELP_TRACK_CONDUTOR c, HELP_TRACK_VEICULO v WHERE c.CODIGO_CONDUTOR = v.condutor and v.CODIGO_VEICULO = veiculo.codigo_veiculo) as nome_condutor,
+            (SELECT codigo_condutor FROM HELP_TRACK_CONDUTOR c, HELP_TRACK_VEICULO v WHERE c.CODIGO_CONDUTOR = v.condutor and v.CODIGO_VEICULO = veiculo.codigo_veiculo) as codigo_condutor
         FROM 
             help_track_viagem viagem, 
             help_track_veiculo veiculo,   
@@ -107,7 +109,7 @@
         echo $sqlViagens;
         exit();
     }else{
-        #echo $sqlBancoCondutor;
+        #echo $sqlViagens;
         while (($row = oci_fetch_assoc($respostaViagens)) != false) {
             $arrayViagens[] = array(
                 "codViagem"             => $row['CODIGO_VIAGEM'],
@@ -125,7 +127,9 @@
                 "codSituacaoViagem"     => $row['CODIGO_SITUACAO_VIAGEM'],
                 "descricaoViagem"       => $row['DESCRICAO'],
                 "placa"                 => $row['PLACA'],
-                "codVeiculo"            => $row['CODIGO_VEICULO']
+                "codVeiculo"            => $row['CODIGO_VEICULO'],
+                "nomeCondutor"          => $row['NOME_CONDUTOR'],
+                "codCondutor"           => $row['CODIGO_CONDUTOR']
             );
         }
     }

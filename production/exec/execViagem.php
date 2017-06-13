@@ -9,79 +9,118 @@
     switch ($acao){
         case 'finalizarViagem':
             $codViagem = $_REQUEST['codViagem'];
+            $descViagem = $_REQUEST['descViagem'];
 
-            $sqlFinalizarViagem = "
-                UPDATE help_track_viagem
-                SET situacao = 1, data_hora_chegada = SYSDATE
-                WHERE codigo_viagem = '".$codViagem."'
-            ";
-
-            $resFinalizarViagem = oci_parse($conexao, $sqlFinalizarViagem);
-
-            if(!oci_execute($resFinalizarViagem)) {
-                $aux = oci_error($resFinalizarViagem);
-                echo $aux['message'];
-                exit();
-            }
-
-            oci_free_statement($resFinalizarViagem);
-
-            #Chamando a procedure para atualizar o status
-            $sqlProcedureViagem = "
-                 BEGIN
-                    PKG_HELP_TRACK.ATUALIZASTATUSVIAGEM;
-                    COMMIT;
-                 END;
-            ";
-            $resProcedureViagem = oci_parse($conexao, $sqlProcedureViagem);
-            if(!oci_execute($resProcedureViagem)) {
-                $aux = oci_error($resProcedureViagem);
-                echo $aux['message'];
-                exit();
-            }
-            oci_free_statement($resProcedureViagem);
-
-            break;
-
-        case 'iniciarViagem':
-            $codViagem = $_REQUEST['codViagem'];
-
-            $sqlIniciarViagem = "
-                UPDATE help_track_viagem
-                SET situacao = 3, data_hora_partida = SYSDATE
-                WHERE codigo_viagem = '".$codViagem."'
-            ";
+            $sqlInsetRegistro = "
+                INSERT INTO HELP_TRACK_REGISTROS(codigo_registro, descricao, DATA_HORA, USUARIO, VIAGEM) 
+                VALUES (seq_help_track_registros.nextval, 'Viagem Finalizada', SYSDATE, 'Bruno Souza', '".$descViagem."')";
             #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
 
-            $resIniciarViagem = oci_parse($conexao, $sqlIniciarViagem);
+            $resInsertRegistro = oci_parse($conexao, $sqlInsetRegistro);
 
-            if(!oci_execute($resIniciarViagem)) {
-                $aux = oci_error($resIniciarViagem);
-                echo $aux['message'];
+            if(!oci_execute($resInsertRegistro)) {
+                $aux = oci_error($resInsertRegistro);
+                echo $aux['message'].$sqlInsetRegistro;
                 exit();
+            }else {
+
+                $sqlFinalizarViagem = "
+                    UPDATE help_track_viagem
+                    SET situacao = 1, data_hora_chegada = SYSDATE
+                    WHERE codigo_viagem = '" . $codViagem . "'
+                ";
+
+                $resFinalizarViagem = oci_parse($conexao, $sqlFinalizarViagem);
+
+                if (!oci_execute($resFinalizarViagem)) {
+                    $aux = oci_error($resFinalizarViagem);
+                    echo 'Erro ao executar a finalizacao da viagem' . $sqlFinalizarViagem;
+                    exit();
+                }
+
+                oci_free_statement($resFinalizarViagem);
+
+                #Chamando a procedure para atualizar o status
+                $sqlProcedureViagem = "
+                     BEGIN
+                        PKG_HELP_TRACK.ATUALIZASTATUSVIAGEM;
+                        COMMIT;
+                     END;";
+
+                $resProcedureViagem = oci_parse($conexao, $sqlProcedureViagem);
+                if (!oci_execute($resProcedureViagem)) {
+                    $aux = oci_error($resProcedureViagem);
+                    echo 'Erro ao executar a procedure' . $sqlProcedureViagem;
+                    exit();
+                }
+                oci_free_statement($resProcedureViagem);
             }
 
-            oci_free_statement($resIniciarViagem);
+            break;
+        case 'iniciarViagem':
+            $codViagem = $_REQUEST['codViagem'];
+            $descViagem = $_REQUEST['descViagem'];
+
+            $sqlInsetRegistro = "
+                INSERT INTO HELP_TRACK_REGISTROS(codigo_registro, descricao, DATA_HORA, USUARIO, VIAGEM) 
+                VALUES (seq_help_track_registros.nextval, 'Viagem Iniciada', SYSDATE, 'Bruno Souza', '".$descViagem."')";
+            #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
+
+            $resInsertRegistro = oci_parse($conexao, $sqlInsetRegistro);
+
+            if(!oci_execute($resInsertRegistro)) {
+                $aux = oci_error($resInsertRegistro);
+                echo $aux['message'].$sqlInsetRegistro;
+                exit();
+            }else {
+
+                $sqlIniciarViagem = "
+                    UPDATE help_track_viagem
+                    SET situacao = 3, data_hora_partida = SYSDATE
+                    WHERE codigo_viagem = '" . $codViagem . "'
+                ";
+                #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
+
+                $resIniciarViagem = oci_parse($conexao, $sqlIniciarViagem);
+
+                if (!oci_execute($resIniciarViagem)) {
+                    $aux = oci_error($resIniciarViagem);
+                    echo $aux['message'];
+                    exit();
+                }
+
+                oci_free_statement($resIniciarViagem);
+            }
 
             break;
         case 'excluirViagem':
             $codViagem = $_REQUEST['codViagem'];
+            $descViagem = $_REQUEST['descViagem'];
 
-            $sqlExcluirViagem = "
-                DELETE FROM HELP_TRACK_VIAGEM WHERE CODIGO_VIAGEM = '".$codViagem."'
-            ";
+            $sqlInsetRegistro = "
+                INSERT INTO HELP_TRACK_REGISTROS(codigo_registro, descricao, DATA_HORA, USUARIO, VIAGEM) 
+                VALUES (seq_help_track_registros.nextval, 'Viagem Excluida', SYSDATE, 'Bruno Souza', '".$descViagem."')";
             #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
 
-            $resExcluirViagem = oci_parse($conexao, $sqlExcluirViagem);
+            $resInsertRegistro = oci_parse($conexao, $sqlInsetRegistro);
 
-            if(!oci_execute($resExcluirViagem)) {
-                $aux = oci_error($resExcluirViagem);
-                echo $aux['message'];
+            if(!oci_execute($resInsertRegistro)) {
+                $aux = oci_error($resInsertRegistro);
+                echo $aux['message'].$sqlInsetRegistro;
                 exit();
+            }else{
+                $sqlExcluirViagem = "DELETE FROM HELP_TRACK_VIAGEM WHERE CODIGO_VIAGEM = '".$codViagem."'";
+                #echo 'SQL INSERT: '.$sqlInsertViagem; exit();
+
+                $resExcluirViagem = oci_parse($conexao, $sqlExcluirViagem);
+
+                if(!oci_execute($resExcluirViagem)) {
+                    $aux = oci_error($resExcluirViagem);
+                    echo $aux['message'];
+                    exit();
+                }
+                oci_free_statement($resExcluirViagem);
             }
-
-            oci_free_statement($resExcluirViagem);
-
             break;
         case 'novaViagem':
             $descricaoViagem    = $_REQUEST['descricaoViagem'];
@@ -126,7 +165,7 @@
 
             if(!oci_execute($resInsertViagem)) {
                 $aux = oci_error($resInsertViagem);
-                echo $aux['message'];
+                echo 'Erro ao inserir viagem: '.$sqlInsertViagem;
                 exit();
             }
 

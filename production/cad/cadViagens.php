@@ -82,7 +82,7 @@
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-bar-chart"></i> Opera&ccedil;&atilde;o <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="../dashboard.html">Dashboard</a></li>
+                      <li><a href="../dashboard.php">Dashboard</a></li>
                       <li><a href="#">Mapa</a></li>
                     </ul>
                   </li>
@@ -171,17 +171,17 @@
                           </div>
 
                           <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" >Ve&iacute;culo <span class="required">*</span></label>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" >Condutor  - Ve&iacute;culo<span class="required">*</span></label>
 
                             <div class="col-md-6 col-sm-6 col-xs-12">
                               <select class="form-control" id="idComboVeiculo">
                                 <?
-                                $sqlVeiculos = "SELECT * FROM help_track_veiculo WHERE codigo_veiculo NOT IN (SELECT veiculo FROM HELP_TRACK_VIAGEM WHERE veiculo IS NOT NULL)";
+                                $sqlVeiculos = "SELECT v.codigo_veiculo, v.placa, c.nome FROM help_track_veiculo v, help_track_condutor c WHERE v.condutor = c.codigo_condutor and codigo_veiculo NOT IN (SELECT veiculo FROM HELP_TRACK_VIAGEM WHERE data_hora_chegada IS NULL)";
                                 $respostaVeiculos = oci_parse ($conexao, $sqlVeiculos);
                                 oci_execute($respostaVeiculos);
                                 while (($rowVeiculo = oci_fetch_assoc($respostaVeiculos)) != false) {
                                 ?>
-                                    <option value="<?=$rowVeiculo['CODIGO_VEICULO']?>"><?=$rowVeiculo['PLACA']?></option>
+                                    <option value="<?=$rowVeiculo['CODIGO_VEICULO']?>"><?=$rowVeiculo['NOME']. ' - '.$rowVeiculo['PLACA']?></option>
                                 <? } ?>
                               </select>
                             </div>
@@ -231,7 +231,7 @@
                                     <div class="controls">
                                       <div class="input-prepend input-group">
                                         <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
-                                          <input value="01/06/2017 12:00 - 01/06/2017 12:00" type="text" name="reservation-time" id="reservation-time" class="form-control col-md-7 col-xs-12" required="required"/>
+                                          <input value="01/06/2017 12:00 - 01/07/2017 12:00" type="text" name="reservation-time" id="reservation-time" class="form-control col-md-7 col-xs-12" required="required"/>
                                       </div>
                                     </div>
                                   </div>
@@ -302,6 +302,18 @@
             //Funcao para envio dos dados de viagem
             $('#buttonSalvar').click(function(){
 
+                var datas = $('#reservation-time').val().split(" - ");
+
+                if(datas[0] == datas[1]){
+                    new PNotify({
+                        title: 'Ops! ',
+                        text: 'As data de inicio e fim devem ser diferentes.',
+                        type: 'error',
+                        styling: 'bootstrap3'
+                    });
+                    return;
+                }
+
                 if($('#idComboReferenciaIni').val() == $ ('#idComboReferenciaFim').val()){
                     new PNotify({
                         title: 'Ops! ',
@@ -363,7 +375,7 @@
                                 styling: 'bootstrap3'
                             });
                             $('#idFormCadViagem').trigger("reset");
-                            $('#reservation-time').val('01/06/2017 12:00 - 01/06/2017 12:00');
+                            $('#reservation-time').val('01/06/2017 12:00 - 01/07/2017 12:00');
                         }
                     },
                     error: function () {

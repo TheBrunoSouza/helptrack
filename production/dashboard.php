@@ -1,3 +1,10 @@
+<?php
+require_once ('../../includes/OracleCielo.class.php');
+
+$oraCielo   = new OracleCielo ();
+$conexao    = $oraCielo->getCon();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,17 +76,17 @@
                 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                     <div class="menu_section">
                         <ul class="nav side-menu">
-                            <li><a><i class="fa fa-bar-chart"></i> Operação <span class="fa fa-chevron-down"></span></a>
+                            <li><a><i class="fa fa-bar-chart"></i> Opera&ccedil;&atilde;o <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
-                                    <li><a href="dashboard.html">Dashboard</a></li>
-                                    <li><a href="#">Mapa</a></li>
+                                    <li><a href="dashboard.php">Dashboard</a></li>
+                                    <li><a href="mapa/viagens.php">Mapa</a></li>
                                 </ul>
                             </li>
-                            <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
+                            <li><a><i class="fa fa-cogs"></i> Manuten&ccedil;&atilde;o <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
                                     <li><a href="tables/tableCondutores.html">Condutores</a></li>
-                                    <li><a href="#">Pontos de Referência</a></li>
-                                    <li><a href="#">Veículos</a></li>
+                                    <li><a href="#">Pontos de Refer&ecirc;ncia</a></li>
+                                    <li><a href="#">Ve&iacute;culo</a></li>
                                     <li><a href="tables/tableViagens.html">Viagens</a></li>
                                 </ul>
                             </li>
@@ -142,15 +149,15 @@
                     <div class="count" style="color: #00A000" id="totalNoPrazo">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="tables/tableViagens.html?param=aguardando">Aguardando Início </a></span>
+                    <span class="count_top"><i class="fa fa-exclamation-triangle"></i> <a href="tables/tableViagens.html?param=aguardando">Aguardando In&iacute;cio </a></span>
                     <div class="count" style="color: #faa400" id="totalAgurdandoInicio">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-automobile"></i><a href="#"> Veículos</a></span>
+                    <span class="count_top"><i class="fa fa-automobile"></i><a href="#"> Ve&iacute;culo</a></span>
                     <div class="count" id="totalVeiculos">0</div>
                 </div>
                 <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-user"></i><a href="#"> Condutores</a></span>
+                    <span class="count_top"><i class="fa fa-user"></i><a href="tables/tableCondutores.html"> Condutores</a></span>
                     <div class="count" id="totalCondutores">0</div>
                 </div>
             </div>
@@ -222,39 +229,63 @@
                         <div class="col-md-3 col-sm-3 col-xs-12 bg-white">
                             <br>
                             <div class="x_title">
-                                <i class="fa fa-trophy"></i> <a href="../index.html">Ranking de Condutores</a>
+                                <i class="fa fa-trophy"></i> <a href="tables/tableCondutores.html">Ranking de Condutores</a>
                             </div>
 
                             <div class="col-md-12 col-sm-12 col-xs-6">
-                                <div>
-                                    <p>1º</p>
-                                    <p>Ademir Rosa - 04 Atrasos no total</p>
-                                    <div class="">
-                                        <div class="progress progress_sm" style="width: 90%;">
-                                            <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="4"></div>
+                                <?
+                                $sqlRanking = "
+                                    SELECT  * from (
+                                      SELECT * FROM HELP_TRACK_CONDUTOR ORDER BY TOTAL_ATRASOS ASC
+                                    ) WHERE rownum >= 1 and rownum <= 3";
+
+                                $respostaVeiculos = oci_parse ($conexao, $sqlRanking);
+
+                                oci_execute($respostaVeiculos);
+                                while (($rowVeiculo = oci_fetch_assoc($respostaVeiculos)) != false) {
+
+                                    ?>
+                                    <div>
+                                        <p><?=$rowVeiculo['NOME']?></p>
+                                        <p><?=$rowVeiculo['TOTAL_ATRASOS']?> Atrasos no total</p>
+                                        <div class="">
+                                            <div class="progress progress_sm" style="width: 90%;">
+                                                <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="<?=$rowVeiculo['TOTAL_ATRASOS']*10?>"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <p>2º</p>
-                                    <p>Jeferson Marques - 35 Atrasos no total</p>
-                                    <div class="">
-                                        <div class="progress progress_sm" style="width: 90%;">
-                                            <div class="progress-bar bg-blue" role="progressbar" data-transitiongoal=35></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12 col-xs-6">
-                                <div>
-                                    <p>3º</p>
-                                    <p>Carlos Alberto - 55 Atrasos no total</p>
-                                    <div class="">
-                                        <div class="progress progress_sm" style="width: 90%;">
-                                            <div class="progress-bar bg-orange" role="progressbar" data-transitiongoal="55"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <?
+                                    $count++;
+                                } ?>
+<!--                                <div>-->
+<!--                                    <p>1º</p>-->
+<!--                                    <p>Ademir Rosa - 04 Atrasos no total</p>-->
+<!--                                    <div class="">-->
+<!--                                        <div class="progress progress_sm" style="width: 90%;">-->
+<!--                                            <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="4"></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div>-->
+<!--                                    <p>2º</p>-->
+<!--                                    <p>Jeferson Marques - 35 Atrasos no total</p>-->
+<!--                                    <div class="">-->
+<!--                                        <div class="progress progress_sm" style="width: 90%;">-->
+<!--                                            <div class="progress-bar bg-blue" role="progressbar" data-transitiongoal=35></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-12 col-sm-12 col-xs-6">-->
+<!--                                <div>-->
+<!--                                    <p>3º</p>-->
+<!--                                    <p>Carlos Alberto - 55 Atrasos no total</p>-->
+<!--                                    <div class="">-->
+<!--                                        <div class="progress progress_sm" style="width: 90%;">-->
+<!--                                            <div class="progress-bar bg-orange" role="progressbar" data-transitiongoal="55"></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
                             </div>
                         </div>
                         <!--FIM RANKING DE CONDUTORES-->
@@ -278,7 +309,7 @@
                         <!--</div>-->
                         <div class="row x_title">
                             <div class="col-md-6">
-                                <h3>Últimas Ocorrências</h3>
+                                <h3>Registro de Atividade</h3>
                             </div>
                         </div>
                         <!--GRID DE OCORRENCIAS-->
@@ -289,56 +320,33 @@
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>Descrição</th>
-                                        <th>Data Hora</th>
-                                        <th>Placa</th>
-                                        <th>Condutor</th>
-                                        <th>Local</th>
-                                        <th>Parâmetro</th>
+                                        <th>#</th>
+                                        <th>Descri&ccedil;&atilde;o</th>
+                                        <th>Data</th>
+                                        <th>Usuario</th>
+                                        <th>Viagem</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td style="color: red">Entrega atrasada</td>
-                                        <td>17/04/17 15:55</td>
-                                        <td>IVN0609</td>
-                                        <td>Marcos Silva</td>
-                                        <td>São Paulo - Avenida das Américas</td>
-                                        <td>Hora prevista: 15:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Excesso de velocidade</td>
-                                        <td>15/04/17 14:22</td>
-                                        <td>ATX7766</td>
-                                        <td>Lucas Cidade</td>
-                                        <td>Avenida Brasil - 176</td>
-                                        <td>Velocidade: 101km/h</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="color: orange;">Possível atraso na chegada ao destino</td>
-                                        <td>15/04/17 23:10</td>
-                                        <td>IET7265</td>
-                                        <td>Reginaldo Araujo</td>
-                                        <td>RS - 324 Km 189</td>
-                                        <td>Movimentação até 22h00 </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="color: orange">Atraso na partida</td>
-                                        <td>15/04/17 23:10</td>
-                                        <td>IET7265</td>
-                                        <td>Reginaldo Araujo</td>
-                                        <td>RS - 324 Km 189</td>
-                                        <td>Hora prevista de partida: 22:00 </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Movimento indevido</td>
-                                        <td>15/04/17 23:10</td>
-                                        <td>IET7265</td>
-                                        <td>Reginaldo Araujo</td>
-                                        <td>RS - 324 Km 189</td>
-                                        <td>Movimentação até 22h00 </td>
-                                    </tr>
-
+                                    <?
+                                    $sqlVeiculos = " 
+                                      SELECT  CODIGO_REGISTRO, DESCRICAO, TO_CHAR(DATA_HORA, 'DD/MM/YYYY HH24:MI:SS') AS DATA_HORA, USUARIO, VIAGEM from (
+                                        SELECT  *
+                                        FROM    HELP_TRACK_REGISTROS r 
+                                        ORDER BY data_hora desc
+                                      ) WHERE rownum >= 1 and rownum <= 10";
+                                    $respostaVeiculos = oci_parse ($conexao, $sqlVeiculos);
+                                    oci_execute($respostaVeiculos);
+                                    while (($rowVeiculo = oci_fetch_assoc($respostaVeiculos)) != false) {
+                                        ?>
+                                        <tr>
+                                            <td><?=$rowVeiculo['CODIGO_REGISTRO']?></td>
+                                            <td><?=$rowVeiculo['DESCRICAO']?></td>
+                                            <td><?=$rowVeiculo['DATA_HORA']?></td>
+                                            <td><?=$rowVeiculo['USUARIO']?></td>
+                                            <td><?=$rowVeiculo['VIAGEM']?></td>
+                                        </tr>
+                                    <? } ?>
                                     </tbody>
                                 </table>
                             </div>

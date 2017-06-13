@@ -104,13 +104,13 @@
             <ul class="nav side-menu">
               <li><a><i class="fa fa-bar-chart"></i> Operação <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                  <li><a href="../dashboard.html">Dashboard</a></li>
+                  <li><a href="../dashboard.php">Dashboard</a></li>
                   <li><a href="#">Mapa</a></li>
                 </ul>
               </li>
               <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                  <li><a href="form.html">Condutores</a></li>
+                  <li><a href="../tables/tableCondutores.html">Condutores</a></li>
                   <li><a href="#">Pontos de Referência</a></li>
                   <li><a href="#">Veículos</a></li>
                   <li><a href="tableViagens.html">Viagens</a></li>
@@ -168,8 +168,8 @@
             <!-- TABELA DE VIAGENS -->
             <!-- =================================================================================================== -->
             <div class="row x_title">
-              <div class="col-md-6">
-                <h3>Viagens</h3>
+              <div id="titulo" class="col-md-6">
+                <h3></h3>
               </div>
             </div>
             <br>
@@ -222,6 +222,7 @@
                     <button id="buttonIniciarViagem" class="btn btn-primary" type="button" style="margin-left: 70%" onclick="iniciarViagem()">Iniciar</button>
                   </div>
                   <input type="text" id="codViagemIniciarHidden" hidden="true">
+                  <input type="text" id="descViagemIniciarHidden" hidden="true">
                 </div>
               </div>
             </div>
@@ -248,6 +249,7 @@
                     <button id="buttonFinalizarViagem" class="btn btn-danger" type="button" style="margin-left: 70%" onclick="finalizarViagem()">Encerrar</button>
                   </div>
                   <input type="text" id="codViagemFinalizarHidden" hidden="true">
+                  <input type="text" id="descViagemFinalizarHidden" hidden="true">
                 </div>
               </div>
             </div>
@@ -273,6 +275,7 @@
                     <button id="buttonExcluirViagem" class="btn btn-danger" type="button" style="margin-left: 70%" onclick="excluirViagem()">Excluir</button>
                   </div>
                   <input type="text" id="codViagemExcluirHidden" hidden="true">
+                  <input type="text" id="descViagemExcluirHidden" hidden="true">
                 </div>
               </div>
             </div>
@@ -297,7 +300,8 @@
           url: '../exec/execViagem.php',
           data: {
               "acao": 'iniciarViagem',
-              "codViagem": $('#codViagemIniciarHidden').val()
+              "codViagem": $('#codViagemIniciarHidden').val(),
+              "descViagem": $('#descViagemExcluirHidden').val()
           },
           success: function () {
               alert ("Viagem Iniciada!");
@@ -313,7 +317,8 @@
           url: '../exec/execViagem.php',
           data: {
               "acao": 'finalizarViagem',
-              "codViagem": $('#codViagemFinalizarHidden').val()
+              "codViagem": $('#codViagemFinalizarHidden').val(),
+              "descViagem": $('#descViagemFinalizarHidden').val()
           },
           success: function () {
               alert ("Viagem Finalizada!");
@@ -329,7 +334,8 @@
           url: '../exec/execViagem.php',
           data: {
               "acao": 'excluirViagem',
-              "codViagem": $('#codViagemExcluirHidden').val()
+              "codViagem": $('#codViagemExcluirHidden').val(),
+              "descViagem": $('#descViagemExcluirHidden').val()
           },
           success: function () {
               alert ("Viagem Excluída!");
@@ -369,9 +375,17 @@
       };
 
       var param = getUrlParameter('param');
+      if(param == null){
+          $ ('#titulo').html ('<h3>Viagens</h3>');
+
+      }else{
+          $ ('#titulo').html ('<h3>Viagens - '+param+'</h3>');
+
+      }
 
       var table = $('#idDataTablesViagem').DataTable({
           "order": [
+              [ 9, "asc" ],
               [ 8, "asc" ]
           ],
           "bJQueryUI": true,
@@ -416,7 +430,7 @@
                   sortable: false,
                   "render": function (data, type, full, meta) {
                       if (full.partida == null) {
-                          return "<button type='button' class='btn btn-primary btn-circle'data-target='#viagemMapModal' data-toggle='modal' data-viagem='"+full.codViagem+"' data-placa='"+full.placa+"'data-refini='"+full.codReferenciaIni+"'data-reffim='"+full.codReferenciaFim+"'>" +
+                          return "<button type='button' class='btn btn-primary btn-circle'data-target='#viagemMapModal' data-toggle='modal' data-viagem='"+full.codViagem+"' data-placa='"+full.placa+"'data-refini='"+full.codReferenciaIni+"'data-reffim='"+full.codReferenciaFim+"' data-descricao='"+full.descricaoViagem+"'>" +
                               "<i class='fa fa-play'></i>" +
                               "</button>";
                       }
@@ -448,7 +462,7 @@
                   //Excluir
                   sortable: false,
                   "render": function (data, type, full, meta) {
-                      var html = "<button type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#confirmExcluir' data-viagem='"+full.codViagem+"'>"+
+                      var html = "<button type='button' class='btn btn-primary btn-circle' data-toggle='modal' data-target='#confirmExcluir' data-viagem='"+full.codViagem+"' data-descricao='"+full.descricaoViagem+"'>"+
                           "<i class='fa fa-remove'></i>"+
                           "</button>";
                       return (html);
@@ -489,7 +503,7 @@
                               colorFont = '#1917ff';
                               break;
                           case '2': //Aguardando inicio
-                              colorFont = '#fa9000'
+                              colorFont = '#f83223'
                               break;
                           case '3': //Em Andamento
                               colorFont = '#49ff07';
@@ -508,7 +522,7 @@
                   }
                   if(rowData.chegada == null){
                       $(td).html(
-                          "<button type='button'  "+disabled +" class='btn btn-primary btn-circle' data-target='#chegadaModal' data-toggle='modal' data-viagem='"+rowData.codViagem+"' data-placa='"+rowData.placa+"' data-refini='"+rowData.codReferenciaIni+"' data-reffim='"+rowData.codReferenciaFim+"'><i class='fa fa-stop'></i></button>");
+                          "<button type='button'  "+disabled +" class='btn btn-primary btn-circle' data-target='#chegadaModal' data-toggle='modal' data-viagem='"+rowData.codViagem+"' data-descricao='"+rowData.descricaoViagem+"' data-placa='"+rowData.placa+"' data-refini='"+rowData.codReferenciaIni+"' data-reffim='"+rowData.codReferenciaFim+"'><i class='fa fa-stop'></i></button>");
                   }else{
                       $(td).html(rowData.chegada);
                   }
@@ -524,6 +538,7 @@
       //Modal de exclusão
       $('#confirmExcluir').on('shown.bs.modal', function(e) {
           $('#codViagemExcluirHidden').val(e.relatedTarget.dataset.viagem);
+          $('#descViagemExcluirHidden').val(e.relatedTarget.dataset.descricao);
       });
 
       //Modal de partida
@@ -533,7 +548,7 @@
                   lat: -22.397,
                   lng: -44.644
               },
-              zoom: 8
+              zoom: 10
           });
 
           $('#codViagemFinalizarHidden').val(e.relatedTarget.dataset.viagem);
@@ -550,6 +565,7 @@
 
           var posicaoFlag = "";
           var flag = 0;
+          var aux = 'Partida';
 
           infoWindow = new google.maps.InfoWindow();
 
@@ -567,7 +583,7 @@
                       url: '../images/imagens/16x16/'+img+'.png',
                       origin: new google.maps.Point(0, 0),
                       anchor: new google.maps.Point(4, 4),
-                      scaledSize: new google.maps.Size(16, 16)
+                      scaledSize: new google.maps.Size(18, 18)
                   };
 
                   var latLng = new google.maps.LatLng(data.lat, data.lon);
@@ -576,12 +592,13 @@
                       center:     location,
                       map:        map,
                       position:   latLng,
-                      //title:      data.placa,
+                      title:      aux,
                       icon : image
                   });
 
                   var details =
                       "<div>" +
+                      "<p style='text-align: center'><b>"+aux+"</b></p>" +
                       "<p><b>Local:</b> " + data.data_hora + "</p>" +
                       "<p><b>Lat</b>: " + data.lat + "</p>" +
                       "<p><b>Lon</b>: " + data.lon + "</p>";
@@ -596,6 +613,7 @@
                   markersRef.push(markerRef);
 
                   flag = 1;
+                  aux = 'Chegada';
               });
           });
 
@@ -619,13 +637,14 @@
                   lat: -22.397,
                   lng: -44.644
               },
-              zoom: 6
+              zoom: 10
           });
 
           //Limpa os marcadores em caso de abrir uma nova viagem
           //clearMarkers (null);
 
           $('#codViagemIniciarHidden').val(e.relatedTarget.dataset.viagem);
+          $('#descViagemExcluirHidden').val(e.relatedTarget.dataset.descricao);
 
           $.getJSON('../json/jsonRota.php', dados, function (json1) {
 
@@ -701,10 +720,11 @@
                   lat: -22.397,
                   lng: -44.644
               },
-              zoom: 8
+              zoom: 10
           });
 
           $('#codViagemFinalizarHidden').val(e.relatedTarget.dataset.viagem);
+          $('#descViagemFinalizarHidden').val(e.relatedTarget.dataset.descricao);
 
           var infowindow = new google.maps.InfoWindow();
           var marker;
@@ -718,6 +738,7 @@
 
           var posicaoFlag = "";
           var flag = 0;
+          var aux = 'Partida';
 
           infoWindow = new google.maps.InfoWindow();
 
@@ -735,7 +756,7 @@
                       url: '../images/imagens/16x16/'+img+'.png',
                       origin: new google.maps.Point(0, 0),
                       anchor: new google.maps.Point(4, 4),
-                      scaledSize: new google.maps.Size(16, 16)
+                      scaledSize: new google.maps.Size(18, 18)
                   };
 
                   var latLng = new google.maps.LatLng(data.lat, data.lon);
@@ -744,12 +765,13 @@
                       center:     location,
                       map:        map,
                       position:   latLng,
-                      //title:      data.placa,
+                      title:      aux,
                       icon : image
                   });
 
                   var details =
                       "<div>" +
+                      "<p style='text-align: center'><b>"+aux+"</b></p>" +
                       "<p><b>Local:</b> " + data.data_hora + "</p>" +
                       "<p><b>Lat</b>: " + data.lat + "</p>" +
                       "<p><b>Lon</b>: " + data.lon + "</p>";
@@ -764,6 +786,7 @@
                   markersRef.push(markerRef);
 
                   flag = 1;
+                  aux = 'Chegada';
               });
           });
 

@@ -99,7 +99,7 @@
             AND viagem.status = status_viagem.CODIGO_STATUS_VIAGEM
             AND viagem.situacao = situacao_viagem.CODIGO_SITUACAO_VIAGEM
             $sqlAux
-        ORDER BY viagem.codigo_viagem    
+        ORDER BY situacao_viagem.codigo_situacao_viagem ASC 
     ";
 
     $respostaViagens = oci_parse($conexao, $sqlViagens);

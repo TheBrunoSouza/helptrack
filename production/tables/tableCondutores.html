@@ -104,13 +104,13 @@
             <ul class="nav side-menu">
               <li><a><i class="fa fa-bar-chart"></i> Operação <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                  <li><a href="../dashboard.html">Dashboard</a></li>
+                  <li><a href="../dashboard.php">Dashboard</a></li>
                   <li><a href="#">Mapa</a></li>
                 </ul>
               </li>
               <li><a><i class="fa fa-cogs"></i> Manutenção <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                  <li><a href="form.html">Condutores</a></li>
+                  <li><a href="tableCondutores.html">Condutores</a></li>
                   <li><a href="#">Pontos de Referência</a></li>
                   <li><a href="#">Veículos</a></li>
                   <li><a href="tableViagens.html">Viagens</a></li>
@@ -363,9 +363,9 @@
 //        var param = getUrlParameter('param');
 
         var table = $('#idDataTablesViagem').DataTable({
-//            "order": [
-//                [ , "asc" ]
-//            ],
+            "order": [
+                [3, "desc" ]
+            ],
             "bJQueryUI": true,
             "oLanguage": {
                 "sProcessing":   "Processando...",
